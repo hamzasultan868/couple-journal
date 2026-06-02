@@ -1,0 +1,356 @@
+// app/couple/page.tsx
+'use client'
+
+import { useEffect, useState } from 'react'
+import { useRouter } from 'next/navigation'
+import { useStore } from '@/lib/store'
+import { createCouple, joinCoupleByCode, joinCoupleByEmail } from '@/lib/supabase/couples'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { IslaIllustration } from '@/components/IslaIllustration'
+import { useToast } from '@/components/ui/use-toast'
+import { motion } from 'framer-motion'
+import { Copy, Loader2 } from 'lucide-react'
+import { useConfetti } from '@/lib/hooks/useConfetti'
+import { AnimatedHeart, AnimatedLogo } from '@/components'
+
+export default function CouplePage() {
+  const router = useRouter()
+  const { user, couple, setCouple } = useStore()
+  const { toast } = useToast()
+  const { triggerConfetti } = useConfetti()
+  const [mode, setMode] = useState<'choose' | 'create' | 'join'>('choose')
+  const [inviteCode, setInviteCode] = useState('')
+  const [partnerEmail, setPartnerEmail] = useState('')
+  const [isLoading, setIsLoading] = useState(false)
+  const [myInviteCode, setMyInviteCode] = useState<string | null>(null)
+
+  useEffect(() => {
+    if (!user) {
+      router.push('/auth')
+    } else if (couple) {
+      router.push('/dashboard')
+    }
+  }, [user, couple, router])
+
+  const handleCreateCouple = async () => {
+    if (!user) return
+    setIsLoading(true)
+    try {
+      const newCouple = await createCouple(user.id, user.displayName || 'You', user.photoURL)
+      setCouple(newCouple)
+      setMyInviteCode(newCouple.inviteCode)
+      triggerConfetti()
+      toast({
+        title: 'Couple created!',
+        description: 'Share your invite code with your partner',
+      })
+    } catch (error) {
+      console.error('Error creating couple:', error)
+      toast({
+        title: 'Failed to create couple',
+        description: 'Something went wrong. Please try again.',
+        variant: 'destructive',
+      })
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  const handleJoinByCode = async () => {
+    if (!user || !inviteCode.trim()) return
+    setIsLoading(true)
+    try {
+      const joinedCouple = await joinCoupleByCode(inviteCode.trim(), user.id, user.displayName || 'You', user.photoURL)
+      if (joinedCouple) {
+        setCouple(joinedCouple)
+        triggerConfetti()
+        toast({
+          title: 'Joined successfully!',
+          description: 'You are now connected with your partner',
+        })
+        router.push('/')
+      } else {
+        toast({
+          title: 'Invalid code',
+          description: 'Could not find a couple with this code',
+          variant: 'destructive',
+        })
+      }
+    } catch (error) {
+      console.error('Error joining couple:', error)
+      toast({
+        title: 'Failed to join',
+        description: 'Something went wrong. Please try again.',
+        variant: 'destructive',
+      })
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  const handleJoinByEmail = async () => {
+    if (!user || !partnerEmail.trim()) return
+    setIsLoading(true)
+    try {
+      const joinedCouple = await joinCoupleByEmail(partnerEmail.trim(), user.id, user.displayName || 'You', user.photoURL)
+      if (joinedCouple) {
+        setCouple(joinedCouple)
+        triggerConfetti()
+        toast({
+          title: 'Joined successfully!',
+          description: 'You are now connected with your partner',
+        })
+        router.push('/dashboard')
+      } else {
+        toast({
+          title: 'Not found',
+          description: 'Could not find your partner or they have not created a couple yet',
+          variant: 'destructive',
+        })
+      }
+    } catch (error) {
+      console.error('Error joining couple:', error)
+      toast({
+        title: 'Failed to join',
+        description: 'Something went wrong. Please try again.',
+        variant: 'destructive',
+      })
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  const copyInviteCode = () => {
+    if (myInviteCode) {
+      navigator.clipboard.writeText(myInviteCode)
+      toast({
+        title: 'Copied!',
+        description: 'Invite code copied to clipboard',
+      })
+    }
+  }
+
+  if (!user) return null
+
+  return (
+    <div className="min-h-screen relative overflow-hidden flex items-center justify-center p-4">
+      {/* Animated background */}
+      <div className="absolute inset-0 bg-gradient-to-br from-pink-100 via-purple-50 to-blue-100 dark:from-gray-900 dark:via-purple-950 dark:to-gray-900">
+        <div className="absolute top-20 left-10 w-96 h-96 bg-pink-300 rounded-full mix-blend-multiply filter blur-3xl opacity-50 animate-blob" />
+        <div className="absolute top-40 right-10 w-96 h-96 bg-purple-300 rounded-full mix-blend-multiply filter blur-3xl opacity-50 animate-blob animation-delay-2000" />
+        <div className="absolute bottom-20 left-1/2 w-96 h-96 bg-blue-300 rounded-full mix-blend-multiply filter blur-3xl opacity-50 animate-blob animation-delay-4000" />
+      </div>
+
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="relative z-10 max-w-lg w-full glass rounded-3xl shadow-2xl p-8 backdrop-blur-xl bg-white/80 dark:bg-gray-900/80 border border-white/20 dark:border-gray-800/20"
+      >
+        <motion.div
+          animate={{ y: [0, -10, 0] }}
+          transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
+        >
+          <IslaIllustration className="w-24 h-24 mx-auto mb-6" />
+        </motion.div>
+
+        {mode === 'choose' && (
+          <>
+            <h1 className="font-serif text-3xl font-bold text-center text-foreground mb-2">
+              Connect with Your Partner
+            </h1>
+            <p className="text-center text-muted-foreground mb-8">
+              Create a new couple journal or join your partner's
+            </p>
+
+            <div className="space-y-3">
+              <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+                <Button
+                  onClick={() => setMode('create')}
+                  className="w-full h-12 text-base bg-gradient-to-r from-pink-500 to-purple-500 hover:from-pink-600 hover:to-purple-600 shadow-lg"
+                  size="lg"
+                >
+                  <AnimatedHeart size={20} variant="beating" color="gradient" className="mr-2" />
+                  Create New Couple
+                </Button>
+              </motion.div>
+
+              <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+                <Button
+                  onClick={() => setMode('join')}
+                  variant="outline"
+                  className="w-full h-12 text-base border-2"
+                  size="lg"
+                >
+                  Join Existing Couple
+                </Button>
+              </motion.div>
+            </div>
+          </>
+        )}
+
+        {mode === 'create' && !myInviteCode && (
+          <>
+            <h1 className="font-serif text-3xl font-bold text-center text-foreground mb-2">
+              Create Your Couple
+            </h1>
+            <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+              <Button
+                onClick={handleCreateCouple}
+                disabled={isLoading}
+                className="w-full h-12 text-base bg-gradient-to-r from-pink-500 to-purple-500 hover:from-pink-600 hover:to-purple-600 shadow-lg"
+                size="lg"
+              >
+                {isLoading ? (
+                  <>
+                    <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                    Creating...
+                  </>
+                ) : (
+                  'Generate Invite Code'
+                )}
+              </Button>
+            </motion.div
+              ) : (
+                'Generate Invite Code'
+              )}
+            </Button>
+
+            <Button
+              onClick={() => setMode('choose')}
+              variant="ghost"
+              className="w-full mt-4"
+            >
+              Back
+            </Button>
+          </>
+        )}
+
+        {mode === 'create' && myInviteCode && (
+          <>
+            <h1 className="font-serif text-3xl font-bold text-center text-foreground mb-2">
+              Your Invite Code
+            </h1>
+            <p className="text-center text-muted-foreground mb-8">
+              Share this code with your partner
+            </p>gradient-to-br from-pink-50 to-purple-50 dark:from-pink-950/20 dark:to-purple-950/20 rounded-2xl p-8 text-center mb-6 border border-pink-200 dark:border-pink-800">
+              <motion.p 
+                className="text-6xl font-bold font-mono tracking-wider bg-gradient-to-r from-pink-500 to-purple-500 bg-clip-text text-transparent"
+                animate={{ scale: [1, 1.05, 1] }}
+                transition={{ duration: 2, repeat: Infinity }}
+              >
+                {myInviteCode}
+              </motion.p>
+              <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                <Button
+                  onClick={copyInviteCode}
+                  variant="outline"
+                  className="mt-4"
+                >
+                  <Copy className="mr-2 h-4 w-4" />
+                  Copy Code
+                </Button>
+              </motion.divclassName="mr-2 h-4 w-4" />
+                Copy Code
+              </Button>
+            </div>
+
+            <p className="text-sm text-center text-muted-foreground mb-6">
+              Waiting for your partner to join...
+            </p>
+
+            <Button
+              onClick={() => router.push('/dashboard')}
+              className="w-full bg-sage-500 hover:bg-sage-600"
+            >
+              Go to Journal
+            </Button>
+          </>
+        )}
+
+        {mode === 'join' && (
+          <>
+            <h1 className="font-serif text-3xl font-bold text-center text-foreground mb-2">
+              Join Your Partner
+            </h1>
+            <p className="text-center text-muted-foreground mb-8">
+              Enter your partner's invite code or email
+            </p>
+
+            <div className="space-y-4">
+              <div>
+                <Label htmlFor="code">Invite Code</Label>
+                <Input
+                  id="code"
+                  placeholder="123456"
+                  value={inviteCode}
+                  onChange={(e) => setInviteCode(e.target.value)}
+                  maxLength={6}
+                  className="text-center text-2xl font-mono tracking-wider"
+                />
+                <Button
+                  onClick={handleJoinByCode}
+                  disabled={isLoading || inviteCode.length !== 6}
+                  className="w-full mt-2 bg-blush-500 hover:bg-blush-600"
+                >
+                  {isLoading ? (
+                    <>
+                      <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                      Joining...
+                    </>
+                  ) : (
+                    'Join with Code'
+                  )}
+                </Button>
+              </div>
+
+              <div className="relative">
+                <div className="absolute inset-0 flex items-center">
+                  <span className="w-full border-t" />
+                </div>
+                <div className="relative flex justify-center text-xs uppercase">
+                  <span className="bg-card px-2 text-muted-foreground">Or</span>
+                </div>
+              </div>
+
+              <div>
+                <Label htmlFor="email">Partner's Email</Label>
+                <Input
+                  id="email"
+                  type="email"
+                  placeholder="partner@example.com"
+                  value={partnerEmail}
+                  onChange={(e) => setPartnerEmail(e.target.value)}
+                />
+                <Button
+                  onClick={handleJoinByEmail}
+                  disabled={isLoading || !partnerEmail.includes('@')}
+                  variant="outline"
+                  className="w-full mt-2"
+                >
+                  {isLoading ? (
+                    <>
+                      <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                      Joining...
+                    </>
+                  ) : (
+                    'Join with Email'
+                  )}
+                </Button>
+              </div>
+            </div>
+
+            <Button
+              onClick={() => setMode('choose')}
+              variant="ghost"
+              className="w-full mt-4"
+            >
+              Back
+            </Button>
+          </>
+        )}
+      </motion.div>
+    </div>
+  )
+}
