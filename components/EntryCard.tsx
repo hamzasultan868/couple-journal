@@ -201,53 +201,6 @@ export function EntryCard({ entry, onDelete }: EntryCardProps) {
     </>
   )
 }
-
-
-interface EntryCardProps {
-  entry: JournalEntry
-  onDelete?: (id: string) => void
-}
-
-export function EntryCard({ entry, onDelete }: EntryCardProps) {
-  const [selectedImage, setSelectedImage] = useState<string | null>(null)
-  const [liked, setLiked] = useState(false)
-  const { user } = useStore()
-  const isAuthor = user?.uid === entry.authorId
-  const hasMultipleContributors = entry.contributors.length > 1
-
-  return (
-    <>
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className={`bg-card rounded-[24px] p-6 shadow-lg hover:shadow-xl transition-all ${
-          hasMultipleContributors ? 'border-2 border-gradient' : ''
-        }`}
-        style={
-          hasMultipleContributors
-            ? {
-                background: 'linear-gradient(white, white) padding-box, linear-gradient(135deg, #ff6b8a, #a3ada3) border-box',
-                border: '2px solid transparent',
-              }
-            : undefined
-        }
-      >
-        <div className="flex items-start justify-between mb-4">
-          <div className="flex items-center gap-3">
-            <Avatar>
-              {entry.authorPhoto && <AvatarImage src={entry.authorPhoto} />}
-              <AvatarFallback className="bg-blush-400 text-white">
-                {getInitials(entry.authorName)}
-              </AvatarFallback>
-            </Avatar>
-            <div>
-              <p className="font-semibold text-foreground">{entry.authorName}</p>
-              <p className="text-sm text-muted-foreground">
-                {formatRelativeTime(entry.createdAt)}
-              </p>
-            </div>
-          </div>
-          <div className="flex items-center gap-2">
             <Button
               variant="ghost"
               size="icon"

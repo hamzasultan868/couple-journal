@@ -211,11 +211,7 @@ export default function CouplePage() {
                   'Generate Invite Code'
                 )}
               </Button>
-            </motion.div
-              ) : (
-                'Generate Invite Code'
-              )}
-            </Button>
+            </motion.div>
 
             <Button
               onClick={() => setMode('choose')}
@@ -234,7 +230,9 @@ export default function CouplePage() {
             </h1>
             <p className="text-center text-muted-foreground mb-8">
               Share this code with your partner
-            </p>gradient-to-br from-pink-50 to-purple-50 dark:from-pink-950/20 dark:to-purple-950/20 rounded-2xl p-8 text-center mb-6 border border-pink-200 dark:border-pink-800">
+            </p>
+
+            <div className="bg-gradient-to-br from-pink-50 to-purple-50 dark:from-pink-950/20 dark:to-purple-950/20 rounded-2xl p-8 text-center mb-6 border border-pink-200 dark:border-pink-800">
               <motion.p 
                 className="text-6xl font-bold font-mono tracking-wider bg-gradient-to-r from-pink-500 to-purple-500 bg-clip-text text-transparent"
                 animate={{ scale: [1, 1.05, 1] }}
@@ -251,9 +249,7 @@ export default function CouplePage() {
                   <Copy className="mr-2 h-4 w-4" />
                   Copy Code
                 </Button>
-              </motion.divclassName="mr-2 h-4 w-4" />
-                Copy Code
-              </Button>
+              </motion.div>
             </div>
 
             <p className="text-sm text-center text-muted-foreground mb-6">
