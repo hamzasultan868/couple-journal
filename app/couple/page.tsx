@@ -165,6 +165,15 @@ export default function CouplePage() {
             <p className="text-center text-muted-foreground mb-8">
               Create a new couple journal or join your partner&apos;s
             </p>
+            
+            <div className="bg-gradient-to-br from-rose-50 to-pink-50 dark:from-rose-950/30 dark:to-pink-950/30 rounded-xl p-4 mb-8 border border-rose-200 dark:border-rose-800">
+              <p className="text-sm text-gray-700 dark:text-gray-300">
+                <span className="font-semibold">🎯 Here&apos;s how it works:</span><br/>
+                1️⃣ Create a couple or join your partner<br/>
+                2️⃣ Share the invite code<br/>
+                3️⃣ Write entries, upload photos, build your love story together
+              </p>
+            </div>
 
             <div className="space-y-3">
               <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
@@ -195,8 +204,19 @@ export default function CouplePage() {
         {mode === 'create' && !myInviteCode && (
           <>
             <h1 className="font-serif text-3xl font-bold text-center text-foreground mb-2">
-              Create Your Couple
+              Create Your Couple Journal
             </h1>
+            <p className="text-center text-muted-foreground mb-8">
+              Get started and invite your partner to write and share memories together
+            </p>
+            
+            <div className="bg-rose-50 dark:bg-rose-950/20 rounded-lg p-4 mb-6 border border-rose-200 dark:border-rose-800">
+              <p className="text-sm text-gray-700 dark:text-gray-300">
+                <span className="font-semibold block mb-2">✨ What happens next:</span>
+                You&apos;ll get a unique invite code to share with your partner. They&apos;ll enter it to join your couple, and you&apos;ll unlock the full dashboard to write journals, upload photos, and build your love story together.
+              </p>
+            </div>
+            
             <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
               <Button
                 onClick={handleCreateCouple}
@@ -228,15 +248,16 @@ export default function CouplePage() {
         {mode === 'create' && myInviteCode && (
           <>
             <h1 className="font-serif text-3xl font-bold text-center text-foreground mb-2">
-              Your Invite Code
+              Your Couple is Created! 💕
             </h1>
-            <p className="text-center text-muted-foreground mb-8">
-              Share this code with your partner
+            <p className="text-center text-muted-foreground mb-6">
+              Share this code with your partner so they can join
             </p>
 
             <div className="bg-gradient-to-br from-pink-50 to-purple-50 dark:from-pink-950/20 dark:to-purple-950/20 rounded-2xl p-8 text-center mb-6 border border-pink-200 dark:border-pink-800">
+              <p className="text-sm text-muted-foreground mb-2">Your Invite Code</p>
               <motion.p 
-                className="text-6xl font-bold font-mono tracking-wider bg-gradient-to-r from-pink-500 to-purple-500 bg-clip-text text-transparent"
+                className="text-6xl font-bold font-mono tracking-wider bg-gradient-to-r from-pink-500 to-purple-500 bg-clip-text text-transparent mb-4"
                 animate={{ scale: [1, 1.05, 1] }}
                 transition={{ duration: 2, repeat: Infinity }}
               >
@@ -254,15 +275,22 @@ export default function CouplePage() {
               </motion.div>
             </div>
 
+            <div className="bg-blue-50 dark:bg-blue-950/20 rounded-lg p-4 mb-6 border border-blue-200 dark:border-blue-800">
+              <p className="text-sm text-gray-700 dark:text-gray-300">
+                <span className="font-semibold block mb-2">📋 Share this code with your partner:</span>
+                They can enter this code in the &quot;Join Existing Couple&quot; section to connect with you.
+              </p>
+            </div>
+
             <p className="text-sm text-center text-muted-foreground mb-6">
-              Waiting for your partner to join...
+              ⏳ Waiting for your partner to join...
             </p>
 
             <Button
               onClick={() => router.push('/dashboard')}
-              className="w-full bg-sage-500 hover:bg-sage-600"
+              className="w-full bg-gradient-to-r from-sage-500 to-emerald-500 hover:from-sage-600 hover:to-emerald-600"
             >
-              Go to Journal
+              Start Writing While You Wait
             </Button>
           </>
         )}
@@ -270,15 +298,22 @@ export default function CouplePage() {
         {mode === 'join' && (
           <>
             <h1 className="font-serif text-3xl font-bold text-center text-foreground mb-2">
-              Join Your Partner
+              Join Your Partner's Journal
             </h1>
-            <p className="text-center text-muted-foreground mb-8">
-              Enter your partner&apos;s invite code or email
+            <p className="text-center text-muted-foreground mb-6">
+              Your partner has created a couple journal. Enter their invite code to connect!
             </p>
+            
+            <div className="bg-purple-50 dark:bg-purple-950/20 rounded-lg p-4 mb-6 border border-purple-200 dark:border-purple-800">
+              <p className="text-sm text-gray-700 dark:text-gray-300">
+                <span className="font-semibold block mb-2">💌 Ask your partner for:</span>
+                A 6-digit invite code that they got after creating their couple journal
+              </p>
+            </div>
 
             <div className="space-y-4">
               <div>
-                <Label htmlFor="code">Invite Code</Label>
+                <Label htmlFor="code" className="font-semibold">Invite Code (6 digits)</Label>
                 <Input
                   id="code"
                   placeholder="123456"
@@ -290,7 +325,7 @@ export default function CouplePage() {
                 <Button
                   onClick={handleJoinByCode}
                   disabled={isLoading || inviteCode.length !== 6}
-                  className="w-full mt-2 bg-blush-500 hover:bg-blush-600"
+                  className="w-full mt-2 bg-gradient-to-r from-pink-500 to-purple-500 hover:from-pink-600 hover:to-purple-600 shadow-md"
                 >
                   {isLoading ? (
                     <>
@@ -313,7 +348,7 @@ export default function CouplePage() {
               </div>
 
               <div>
-                <Label htmlFor="email">Partner&apos;s Email</Label>
+                <Label htmlFor="email" className="font-semibold">Partner&apos;s Email</Label>
                 <Input
                   id="email"
                   type="email"
