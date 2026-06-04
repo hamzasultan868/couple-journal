@@ -298,7 +298,7 @@ export default function CouplePage() {
         {mode === 'join' && (
           <>
             <h1 className="font-serif text-3xl font-bold text-center text-foreground mb-2">
-              Join Your Partner's Journal
+              Join Your Partner&apos;s Journal
             </h1>
             <p className="text-center text-muted-foreground mb-6">
               Your partner has created a couple journal. Enter their invite code to connect!
