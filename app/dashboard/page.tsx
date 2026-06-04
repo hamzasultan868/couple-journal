@@ -5,6 +5,7 @@ export const dynamic = 'force-dynamic'
 
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
+import { useSession } from 'next-auth/react'
 import { useAuth } from '@/lib/hooks/useAuth'
 import { useEntries } from '@/lib/hooks/useEntries'
 import { useStore } from '@/lib/store'
@@ -22,7 +23,8 @@ import { LoadingAnimation } from '@/components'
 
 export default function DashboardPage() {
   const router = useRouter()
-  const { user, isLoading } = useAuth()
+  const { data: session, status: sessionStatus } = useSession()
+  const { user, isLoading: authLoading } = useAuth()
   const { entries } = useEntries()
   const { couple } = useStore()
   const { toast } = useToast()
@@ -30,12 +32,23 @@ export default function DashboardPage() {
   const [dialogMode, setDialogMode] = useState<'text' | 'photo' | 'screenshot'>('text')
 
   useEffect(() => {
-    if (!isLoading && !user) {
+    // If NextAuth session is still loading, wait
+    if (sessionStatus === 'loading') return
+
+    // If no session, redirect to auth
+    if (sessionStatus === 'unauthenticated') {
       router.push('/auth')
-    } else if (!isLoading && user && !couple) {
+      return
+    }
+
+    // If session exists but user/couple data not loaded yet, wait
+    if (authLoading) return
+
+    // If user loaded but no couple, redirect to couple setup
+    if (user && !couple) {
       router.push('/couple')
     }
-  }, [user, couple, isLoading, router])
+  }, [user, couple, sessionStatus, authLoading, router])
 
   const handleDelete = async (entryId: string) => {
     const entry = entries.find(e => e.id === entryId)

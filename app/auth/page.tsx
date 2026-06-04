@@ -3,7 +3,7 @@
 
 import { useEffect, useState, useRef, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
-import { signIn } from 'next-auth/react'
+import { useSession, signIn } from 'next-auth/react'
 import { Button } from '@/components/ui/button'
 import { useStore } from '@/lib/store'
 import { useAuth } from '@/lib/hooks/useAuth'
@@ -43,17 +43,22 @@ const perks = [
 
 export default function AuthPage() {
   const router = useRouter()
-  const { user, isLoading } = useAuth()
+  const { data: session, status: sessionStatus } = useSession()
+  const { user, isLoading: authLoading } = useAuth()
   const { toast } = useToast()
   const [isSigningIn, setIsSigningIn] = useState(false)
   const [hoverCard, setHoverCard] = useState(false)
 
   useEffect(() => {
-    if (!isLoading && user) {
+    // If session is still loading, wait
+    if (sessionStatus === 'loading') return
+
+    // If user has valid session and data is loaded
+    if (sessionStatus === 'authenticated' && !authLoading && user) {
       if ((user as any).coupleId) router.push('/dashboard')
       else router.push('/couple')
     }
-  }, [user, isLoading, router])
+  }, [session, sessionStatus, user, authLoading, router])
 
   const handleGoogleSignIn = async () => {
     setIsSigningIn(true)

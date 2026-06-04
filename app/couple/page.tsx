@@ -5,6 +5,7 @@ export const dynamic = 'force-dynamic'
 
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
+import { useSession } from 'next-auth/react'
 import { useStore } from '@/lib/store'
 import { createCouple, joinCoupleByCode, joinCoupleByEmail } from '@/lib/supabase/couples'
 import { Button } from '@/components/ui/button'
@@ -20,6 +21,7 @@ import { AnimatedHeart, AnimatedLogo } from '@/components'
 
 export default function CouplePage() {
   const router = useRouter()
+  const { data: session, status: sessionStatus } = useSession()
   const { user, isLoading: authLoading } = useAuth()
   const { couple, setCouple } = useStore()
   const { toast } = useToast()
@@ -31,12 +33,18 @@ export default function CouplePage() {
   const [myInviteCode, setMyInviteCode] = useState<string | null>(null)
 
   useEffect(() => {
-    if (!authLoading && !user) {
+    // If NextAuth session is still loading, wait
+    if (sessionStatus === 'loading') return
+
+    // If no session and auth is done loading, redirect to auth
+    if (sessionStatus === 'unauthenticated') {
       router.push('/auth')
-    } else if (!authLoading && couple) {
+    } 
+    // If user has couple, redirect to dashboard
+    else if (couple && !authLoading) {
       router.push('/dashboard')
     }
-  }, [user, couple, authLoading, router])
+  }, [session, sessionStatus, couple, authLoading, router])
 
   const handleCreateCouple = async () => {
     if (!user) return
