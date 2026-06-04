@@ -69,7 +69,7 @@ export default function DashboardPage() {
     }
   }
 
-  if (isLoading || !user || !couple) {
+  if (authLoading || !user || !couple) {
     return (
       <div className="flex items-center justify-center min-h-screen aurora-bg">
         <motion.div
