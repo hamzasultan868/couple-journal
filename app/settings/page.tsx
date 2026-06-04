@@ -14,10 +14,17 @@ import { useToast } from '@/components/ui/use-toast'
 import { IslaIllustration } from '@/components/IslaIllustration'
 import { AnimatedHeart } from '@/components'
 
+export const dynamic = 'force-dynamic'
+
 export default function SettingsPage() {
   const router = useRouter()
   const { user, couple } = useStore()
   const { toast } = useToast()
+
+  // Prevent rendering on server
+  if (typeof window === 'undefined') {
+    return null
+  }
 
   const handleSignOut = async () => {
     await signOut({ callbackUrl: '/auth' })

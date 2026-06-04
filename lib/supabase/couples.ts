@@ -12,7 +12,7 @@ export async function createCouple(
 ): Promise<Couple> {
   const inviteCode = generateInviteCode()
   
-  const { data, error } = await supabase
+  const { data, error } = await (supabase
     .from('couples')
     .insert({
       invite_code: inviteCode,
@@ -20,25 +20,25 @@ export async function createCouple(
       partner1_id: userId,
       partner1_name: userName,
       partner1_photo: userPhoto,
-    })
+    } as any)
     .select()
-    .single()
+    .single() as any)
   
   if (error) throw error
   
-  await updateUserCoupleId(userId, data.id)
+  await updateUserCoupleId(userId, (data as any).id)
   
   return {
-    id: data.id,
-    inviteCode: data.invite_code,
-    createdAt: new Date(data.created_at),
-    createdBy: data.created_by,
-    partner1Id: data.partner1_id,
-    partner1Name: data.partner1_name,
-    partner1Photo: data.partner1_photo,
-    partner2Id: data.partner2_id,
-    partner2Name: data.partner2_name,
-    partner2Photo: data.partner2_photo,
+    id: (data as any).id,
+    inviteCode: (data as any).invite_code,
+    createdAt: new Date((data as any).created_at),
+    createdBy: (data as any).created_by,
+    partner1Id: (data as any).partner1_id,
+    partner1Name: (data as any).partner1_name,
+    partner1Photo: (data as any).partner1_photo,
+    partner2Id: (data as any).partner2_id,
+    partner2Name: (data as any).partner2_name,
+    partner2Photo: (data as any).partner2_photo,
   }
 }
 
@@ -49,44 +49,44 @@ export async function joinCoupleByCode(
   userPhoto: string | null
 ): Promise<Couple | null> {
   // Find couple by invite code
-  const { data: coupleData, error } = await supabase
-    .from('couples')
+  const { data: coupleData, error } = await ((supabase
+    .from('couples') as any)
     .select('*')
     .eq('invite_code', code)
-    .single()
+    .single())
   
   if (error || !coupleData) return null
   
   // Check if couple is already full
-  if (coupleData.partner2_id) return null
+  if ((coupleData as any).partner2_id) return null
   
   // Add second partner
-  const { data: updatedCouple, error: updateError } = await supabase
-    .from('couples')
+  const { data: updatedCouple, error: updateError } = await ((supabase
+    .from('couples') as any)
     .update({
       partner2_id: userId,
       partner2_name: userName,
       partner2_photo: userPhoto,
     })
-    .eq('id', coupleData.id)
+    .eq('id', (coupleData as any).id)
     .select()
-    .single()
+    .single())
   
   if (updateError) throw updateError
   
-  await updateUserCoupleId(userId, coupleData.id)
+  await updateUserCoupleId(userId, (coupleData as any).id)
   
   return {
-    id: updatedCouple.id,
-    inviteCode: updatedCouple.invite_code,
-    createdAt: new Date(updatedCouple.created_at),
-    createdBy: updatedCouple.created_by,
-    partner1Id: updatedCouple.partner1_id,
-    partner1Name: updatedCouple.partner1_name,
-    partner1Photo: updatedCouple.partner1_photo,
-    partner2Id: updatedCouple.partner2_id,
-    partner2Name: updatedCouple.partner2_name,
-    partner2Photo: updatedCouple.partner2_photo,
+    id: (updatedCouple as any).id,
+    inviteCode: (updatedCouple as any).invite_code,
+    createdAt: new Date((updatedCouple as any).created_at),
+    createdBy: (updatedCouple as any).created_by,
+    partner1Id: (updatedCouple as any).partner1_id,
+    partner1Name: (updatedCouple as any).partner1_name,
+    partner1Photo: (updatedCouple as any).partner1_photo,
+    partner2Id: (updatedCouple as any).partner2_id,
+    partner2Name: (updatedCouple as any).partner2_name,
+    partner2Photo: (updatedCouple as any).partner2_photo,
   }
 }
 
@@ -97,75 +97,75 @@ export async function joinCoupleByEmail(
   userPhoto: string | null
 ): Promise<Couple | null> {
   // Find user by email
-  const { data: partnerUser, error: userError } = await supabase
-    .from('users')
+  const { data: partnerUser, error: userError } = await ((supabase
+    .from('users') as any)
     .select('*')
     .eq('email', partnerEmail)
-    .single()
+    .single())
   
-  if (userError || !partnerUser || !partnerUser.couple_id) return null
+  if (userError || !partnerUser || !(partnerUser as any).couple_id) return null
   
   // Get the couple
-  const { data: coupleData, error } = await supabase
-    .from('couples')
+  const { data: coupleData, error } = await ((supabase
+    .from('couples') as any)
     .select('*')
-    .eq('id', partnerUser.couple_id)
-    .single()
+    .eq('id', (partnerUser as any).couple_id)
+    .single())
   
   if (error || !coupleData) return null
   
   // Check if couple is already full
-  if (coupleData.partner2_id) return null
+  if ((coupleData as any).partner2_id) return null
   
   // Add second partner
-  const { data: updatedCouple, error: updateError } = await supabase
-    .from('couples')
+  const { data: updatedCouple, error: updateError } = await ((supabase
+    .from('couples') as any)
     .update({
       partner2_id: userId,
       partner2_name: userName,
       partner2_photo: userPhoto,
     })
-    .eq('id', coupleData.id)
+    .eq('id', (coupleData as any).id)
     .select()
-    .single()
+    .single())
   
   if (updateError) throw updateError
   
-  await updateUserCoupleId(userId, coupleData.id)
+  await updateUserCoupleId(userId, (coupleData as any).id)
   
   return {
-    id: updatedCouple.id,
-    inviteCode: updatedCouple.invite_code,
-    createdAt: new Date(updatedCouple.created_at),
-    createdBy: updatedCouple.created_by,
-    partner1Id: updatedCouple.partner1_id,
-    partner1Name: updatedCouple.partner1_name,
-    partner1Photo: updatedCouple.partner1_photo,
-    partner2Id: updatedCouple.partner2_id,
-    partner2Name: updatedCouple.partner2_name,
-    partner2Photo: updatedCouple.partner2_photo,
+    id: (updatedCouple as any).id,
+    inviteCode: (updatedCouple as any).invite_code,
+    createdAt: new Date((updatedCouple as any).created_at),
+    createdBy: (updatedCouple as any).created_by,
+    partner1Id: (updatedCouple as any).partner1_id,
+    partner1Name: (updatedCouple as any).partner1_name,
+    partner1Photo: (updatedCouple as any).partner1_photo,
+    partner2Id: (updatedCouple as any).partner2_id,
+    partner2Name: (updatedCouple as any).partner2_name,
+    partner2Photo: (updatedCouple as any).partner2_photo,
   }
 }
 
 export async function getCoupleById(coupleId: string): Promise<Couple | null> {
-  const { data, error } = await supabase
-    .from('couples')
+  const { data, error } = await ((supabase
+    .from('couples') as any)
     .select('*')
     .eq('id', coupleId)
-    .single()
+    .single())
   
   if (error || !data) return null
   
   return {
-    id: data.id,
-    inviteCode: data.invite_code,
-    createdAt: new Date(data.created_at),
-    createdBy: data.created_by,
-    partner1Id: data.partner1_id,
-    partner1Name: data.partner1_name,
-    partner1Photo: data.partner1_photo,
-    partner2Id: data.partner2_id,
-    partner2Name: data.partner2_name,
-    partner2Photo: data.partner2_photo,
+    id: (data as any).id,
+    inviteCode: (data as any).invite_code,
+    createdAt: new Date((data as any).created_at),
+    createdBy: (data as any).created_by,
+    partner1Id: (data as any).partner1_id,
+    partner1Name: (data as any).partner1_name,
+    partner1Photo: (data as any).partner1_photo,
+    partner2Id: (data as any).partner2_id,
+    partner2Name: (data as any).partner2_name,
+    partner2Photo: (data as any).partner2_photo,
   }
 }
