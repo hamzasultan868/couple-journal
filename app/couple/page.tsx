@@ -15,11 +15,13 @@ import { useToast } from '@/components/ui/use-toast'
 import { motion } from 'framer-motion'
 import { Copy, Loader2 } from 'lucide-react'
 import { useConfetti } from '@/lib/hooks/useConfetti'
+import { useAuth } from '@/lib/hooks/useAuth'
 import { AnimatedHeart, AnimatedLogo } from '@/components'
 
 export default function CouplePage() {
   const router = useRouter()
-  const { user, couple, setCouple } = useStore()
+  const { user, isLoading: authLoading } = useAuth()
+  const { couple, setCouple } = useStore()
   const { toast } = useToast()
   const { triggerConfetti } = useConfetti()
   const [mode, setMode] = useState<'choose' | 'create' | 'join'>('choose')
@@ -29,12 +31,12 @@ export default function CouplePage() {
   const [myInviteCode, setMyInviteCode] = useState<string | null>(null)
 
   useEffect(() => {
-    if (!user) {
+    if (!authLoading && !user) {
       router.push('/auth')
-    } else if (couple) {
+    } else if (!authLoading && couple) {
       router.push('/dashboard')
     }
-  }, [user, couple, router])
+  }, [user, couple, authLoading, router])
 
   const handleCreateCouple = async () => {
     if (!user) return

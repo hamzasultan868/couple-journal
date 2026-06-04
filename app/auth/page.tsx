@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation'
 import { signIn } from 'next-auth/react'
 import { Button } from '@/components/ui/button'
 import { useStore } from '@/lib/store'
+import { useAuth } from '@/lib/hooks/useAuth'
 import { Loader2, Heart, Lock, Camera, Sparkles, ArrowRight } from 'lucide-react'
 import { motion, useMotionValue, useSpring, AnimatePresence } from 'framer-motion'
 import { useToast } from '@/components/ui/use-toast'
@@ -42,25 +43,25 @@ const perks = [
 
 export default function AuthPage() {
   const router = useRouter()
-  const { user } = useStore()
+  const { user, isLoading } = useAuth()
   const { toast } = useToast()
-  const [isLoading, setIsLoading] = useState(false)
+  const [isSigningIn, setIsSigningIn] = useState(false)
   const [hoverCard, setHoverCard] = useState(false)
 
   useEffect(() => {
-    if (user) {
+    if (!isLoading && user) {
       if ((user as any).coupleId) router.push('/dashboard')
       else router.push('/couple')
     }
-  }, [user, router])
+  }, [user, isLoading, router])
 
   const handleGoogleSignIn = async () => {
-    setIsLoading(true)
+    setIsSigningIn(true)
     try {
       await signIn('google', { callbackUrl: '/couple' })
     } catch (error) {
       toast({ title: 'Sign in failed', description: 'Could not sign in with Google. Please try again.', variant: 'destructive' })
-      setIsLoading(false)
+      setIsSigningIn(false)
     }
   }
 
@@ -198,11 +199,11 @@ export default function AuthPage() {
             <MagneticButton className="w-full">
               <Button
                 onClick={handleGoogleSignIn}
-                disabled={isLoading}
+                disabled={isSigningIn}
                 className="w-full h-14 text-base rounded-2xl bg-gradient-to-r from-rose-500 to-violet-500 hover:from-rose-600 hover:to-violet-600 shadow-xl shadow-pink-500/30 hover:shadow-pink-500/50 border-0 font-semibold transition-shadow"
                 size="lg"
               >
-                {isLoading ? (
+                {isSigningIn ? (
                   <>
                     <Loader2 className="h-5 w-5 animate-spin" />
                     Signing in...
