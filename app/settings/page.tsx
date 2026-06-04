@@ -184,7 +184,7 @@ export default function SettingsPage() {
                   Meet Isla
                 </h2>
                 <p className="text-sm text-muted-foreground">
-                  I'm here to help you and your partner create beautiful memories together. 
+                  I&apos;m here to help you and your partner create beautiful memories together. 
                   This journal is your private space to share thoughts, photos, and moments 
                   that matter. ✨
                 </p>
@@ -227,7 +227,7 @@ export default function SettingsPage() {
             animate={{ opacity: 1 }}
             transition={{ delay: 0.5 }}
           >
-            <p className="font-semibold">Couple's Journal v1.0</p>
+            <p className="font-semibold">Couple&apos;s Journal v1.0</p>
             <p className="mt-1 flex items-center justify-center gap-1">
               Made with <AnimatedHeart size={16} variant="beating" color="pink" className="inline" /> for couples
             </p>

@@ -12,8 +12,8 @@ const loveQuotes = [
   "I love you not only for what you are, but for what I am when I am with you.",
   "Every love story is beautiful, but ours is my favorite.",
   "Together is a wonderful place to be.",
-  "I choose you. And I'll choose you over and over and over. Without pause, without a doubt, in a heartbeat. I'll keep choosing you.",
-  "You're my favorite notification.",
+  "I choose you. And I&apos;ll choose you over and over and over. Without pause, without a doubt, in a heartbeat. I&apos;ll keep choosing you.",
+  "You&apos;re my favorite notification.",
   "Love recognizes no barriers. It jumps hurdles, leaps fences, penetrates walls to arrive at its destination full of hope.",
 ]
 
@@ -409,7 +409,7 @@ export function CoupleIllustration({ className = "" }: CoupleIllustrationProps) 
                 color: 'transparent',
               }}
             >
-              "{loveQuotes[quoteIndex]}"
+              &quot;{loveQuotes[quoteIndex]}&quot;
             </motion.p>
             
             {/* Quote indicators */}

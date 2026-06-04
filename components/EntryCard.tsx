@@ -4,7 +4,7 @@
 import { motion, AnimatePresence } from 'framer-motion'
 import { Avatar, AvatarImage, AvatarFallback } from './ui/avatar'
 import { formatRelativeTime, getInitials } from '@/lib/utils'
-import type { JournalEntry } from '@/lib/firebase/types'
+import type { JournalEntry } from '@/lib/supabase/types'
 import { useState, useRef } from 'react'
 import { Dialog, DialogContent } from './ui/dialog'
 import Image from 'next/image'
@@ -25,7 +25,7 @@ export function EntryCard({ entry, onDelete }: EntryCardProps) {
   const [hovered, setHovered] = useState(false)
   const cardRef = useRef<HTMLDivElement>(null)
   const { user } = useStore()
-  const isAuthor = user?.uid === entry.authorId
+  const isAuthor = user?.id === entry.authorId
   const hasMultipleContributors = entry.contributors.length > 1
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {

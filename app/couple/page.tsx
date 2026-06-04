@@ -161,7 +161,7 @@ export default function CouplePage() {
               Connect with Your Partner
             </h1>
             <p className="text-center text-muted-foreground mb-8">
-              Create a new couple journal or join your partner's
+              Create a new couple journal or join your partner&apos;s
             </p>
 
             <div className="space-y-3">
@@ -271,7 +271,7 @@ export default function CouplePage() {
               Join Your Partner
             </h1>
             <p className="text-center text-muted-foreground mb-8">
-              Enter your partner's invite code or email
+              Enter your partner&apos;s invite code or email
             </p>
 
             <div className="space-y-4">
@@ -311,7 +311,7 @@ export default function CouplePage() {
               </div>
 
               <div>
-                <Label htmlFor="email">Partner's Email</Label>
+                <Label htmlFor="email">Partner&apos;s Email</Label>
                 <Input
                   id="email"
                   type="email"

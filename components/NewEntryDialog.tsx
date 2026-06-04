@@ -87,7 +87,7 @@ export function NewEntryDialog({
 
         <div className="space-y-4 py-4">
           <Textarea
-            placeholder="What's on your mind? Write about your day, thoughts, or feelings..."
+            placeholder="What&apos;s on your mind? Write about your day, thoughts, or feelings..."
             value={text}
             onChange={(e) => setText(e.target.value)}
             rows={6}

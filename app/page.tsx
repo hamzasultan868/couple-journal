@@ -385,7 +385,7 @@ function JournalPreview() {
             </motion.div>
           </div>
           <p className="text-xs text-gray-600 dark:text-gray-300 leading-relaxed">
-            "Can't stop thinking about our walk last night 🌙 You always make everything feel magical..."
+            &quot;Can&apos;t stop thinking about our walk last night 🌙 You always make everything feel magical...&quot;
           </p>
         </div>
 
@@ -437,7 +437,7 @@ function ScrollProgress() {
    TESTIMONIALS
 ───────────────────────────────*/
 const quotes = [
-  { text: "We've been using this for 2 years and it's become our most treasured keepsake.", author: "Sarah & Mike" },
+  { text: "We&apos;ve been using this for 2 years and it&apos;s become our most treasured keepsake.", author: "Sarah & Mike" },
   { text: "Distance feels shorter when we share moments here every day.", author: "Priya & James" },
   { text: "I proposed by sharing a journal entry. Best decision of my life.", author: "Leo & Maya" },
 ]
@@ -695,7 +695,7 @@ export default function LandingPage() {
             {[
               { step: 1, icon: BookOpen, title: 'Create your space', desc: 'Sign up in seconds with Google. Instant, secure, zero friction.' },
               { step: 2, icon: Heart, title: 'Invite your partner', desc: 'Send a unique link. When they join, your shared journal activates.' },
-              { step: 3, icon: Sparkles, title: 'Start writing', desc: "Add thoughts, photos, and notes. It's your canvas together." },
+              { step: 3, icon: Sparkles, title: 'Start writing', desc: "Add thoughts, photos, and notes. It&apos;s your canvas together." },
             ].map(({ step, icon: Icon, title, desc }, i) => (
               <motion.div
                 key={step}
