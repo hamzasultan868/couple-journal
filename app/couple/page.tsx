@@ -147,7 +147,7 @@ export default function CouplePage() {
   }
 
   // Show loading while user data is being fetched from Supabase
-  if (!user) {
+  if (authLoading) {
     return (
       <div className="min-h-screen relative overflow-hidden flex items-center justify-center p-4">
         <div className="absolute inset-0 bg-gradient-to-br from-pink-100 via-purple-50 to-blue-100 dark:from-gray-900 dark:via-purple-950 dark:to-gray-900">
