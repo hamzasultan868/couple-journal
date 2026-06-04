@@ -50,6 +50,8 @@ export default function CouplePage() {
         title: 'Couple created!',
         description: 'Share your invite code with your partner',
       })
+      // Redirect to dashboard after couple is created
+      setTimeout(() => router.push('/dashboard'), 500)
     } catch (error) {
       console.error('Error creating couple:', error)
       toast({
@@ -74,7 +76,7 @@ export default function CouplePage() {
           title: 'Joined successfully!',
           description: 'You are now connected with your partner',
         })
-        router.push('/')
+        router.push('/dashboard')
       } else {
         toast({
           title: 'Invalid code',
