@@ -14,10 +14,10 @@ import { Label } from '@/components/ui/label'
 import { IslaIllustration } from '@/components/IslaIllustration'
 import { useToast } from '@/components/ui/use-toast'
 import { motion } from 'framer-motion'
-import { Copy, Loader2 } from 'lucide-react'
+import { Copy, Loader2, Heart } from 'lucide-react'
 import { useConfetti } from '@/lib/hooks/useConfetti'
 import { useAuth } from '@/lib/hooks/useAuth'
-import { AnimatedHeart, AnimatedLogo } from '@/components'
+import { AnimatedHeart, AnimatedLogo, LoadingAnimation } from '@/components'
 
 export default function CouplePage() {
   const router = useRouter()
@@ -146,7 +146,26 @@ export default function CouplePage() {
     }
   }
 
-  if (!user) return null
+  // Show loading while user data is being fetched from Supabase
+  if (!user) {
+    return (
+      <div className="min-h-screen relative overflow-hidden flex items-center justify-center p-4">
+        <div className="absolute inset-0 bg-gradient-to-br from-pink-100 via-purple-50 to-blue-100 dark:from-gray-900 dark:via-purple-950 dark:to-gray-900">
+          <div className="absolute top-20 left-10 w-96 h-96 bg-pink-300 rounded-full mix-blend-multiply filter blur-3xl opacity-50 animate-blob" />
+          <div className="absolute top-40 right-10 w-96 h-96 bg-purple-300 rounded-full mix-blend-multiply filter blur-3xl opacity-50 animate-blob animation-delay-2000" />
+          <div className="absolute bottom-20 left-1/2 w-96 h-96 bg-blue-300 rounded-full mix-blend-multiply filter blur-3xl opacity-50 animate-blob animation-delay-4000" />
+        </div>
+        <motion.div
+          animate={{ scale: [1, 1.2, 1], opacity: [0.5, 1, 0.5] }}
+          transition={{ duration: 1.5, repeat: Infinity }}
+          className="relative z-10 flex flex-col items-center gap-4"
+        >
+          <Heart className="h-12 w-12 fill-rose-400 text-rose-400 drop-shadow-[0_0_16px_rgba(244,63,94,0.6)]" />
+          <p className="text-sm text-gray-400 font-medium">Preparing your journal...</p>
+        </motion.div>
+      </div>
+    )
+  }
 
   return (
     <div className="min-h-screen relative overflow-hidden flex items-center justify-center p-4">
