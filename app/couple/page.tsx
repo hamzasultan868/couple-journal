@@ -275,7 +275,7 @@ export default function CouplePage() {
                 <div>
                   <p className="font-semibold text-slate-900 dark:text-white mb-2">What Happens Next</p>
                   <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
-                    We'll generate a unique 6-digit code that you can share with your partner. They'll enter it to connect, and together you'll unlock the full dashboard to write journals, upload photos, and build your love story.
+                    We&apos;ll generate a unique 6-digit code that you can share with your partner. They&apos;ll enter it to connect, and together you&apos;ll unlock the full dashboard to write journals, upload photos, and build your love story.
                   </p>
                 </div>
               </div>
@@ -351,7 +351,7 @@ export default function CouplePage() {
             <div className="bg-blue-500/10 dark:bg-blue-500/5 rounded-2xl p-4 border border-blue-300/30 dark:border-blue-500/20">
               <p className="text-sm text-blue-900 dark:text-blue-300">
                 <span className="font-semibold block mb-2">Next Step</span>
-                Share this code with your partner so they can join your couple journal. Once they enter the code, you'll be connected and can start creating memories together.
+                Share this code with your partner so they can join your couple journal. Once they enter the code, you&apos;ll be connected and can start creating memories together.
               </p>
             </div>
 
@@ -371,7 +371,7 @@ export default function CouplePage() {
                 Join Your Partner
               </h2>
               <p className="text-slate-600 dark:text-slate-400">
-                Enter your partner's code to connect
+                Enter your partner&apos;s code to connect
               </p>
             </div>
 
