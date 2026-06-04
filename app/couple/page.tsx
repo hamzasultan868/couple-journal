@@ -14,7 +14,7 @@ import { Label } from '@/components/ui/label'
 import { IslaIllustration } from '@/components/IslaIllustration'
 import { useToast } from '@/components/ui/use-toast'
 import { motion } from 'framer-motion'
-import { Copy, Loader2, Heart } from 'lucide-react'
+import { Copy, Loader2, Heart, Sparkles, Users, Mail } from 'lucide-react'
 import { useConfetti } from '@/lib/hooks/useConfetti'
 import { useAuth } from '@/lib/hooks/useAuth'
 import { AnimatedHeart, AnimatedLogo, LoadingAnimation } from '@/components'
@@ -168,52 +168,77 @@ export default function CouplePage() {
   }
 
   return (
-    <div className="min-h-screen relative overflow-hidden flex items-center justify-center p-4">
-      {/* Animated background */}
-      <div className="absolute inset-0 bg-gradient-to-br from-pink-100 via-purple-50 to-blue-100 dark:from-gray-900 dark:via-purple-950 dark:to-gray-900">
-        <div className="absolute top-20 left-10 w-96 h-96 bg-pink-300 rounded-full mix-blend-multiply filter blur-3xl opacity-50 animate-blob" />
-        <div className="absolute top-40 right-10 w-96 h-96 bg-purple-300 rounded-full mix-blend-multiply filter blur-3xl opacity-50 animate-blob animation-delay-2000" />
-        <div className="absolute bottom-20 left-1/2 w-96 h-96 bg-blue-300 rounded-full mix-blend-multiply filter blur-3xl opacity-50 animate-blob animation-delay-4000" />
+    <div className="min-h-screen relative overflow-hidden flex items-center justify-center p-4 py-12">
+      {/* Premium animated background */}
+      <div className="absolute inset-0 bg-gradient-to-br from-slate-50 via-pink-50 to-purple-50 dark:from-slate-950 dark:via-pink-950 dark:to-purple-950">
+        <div className="absolute top-20 left-10 w-96 h-96 bg-gradient-to-r from-pink-300 to-rose-300 rounded-full mix-blend-multiply filter blur-3xl opacity-40 animate-blob" />
+        <div className="absolute top-40 right-10 w-96 h-96 bg-gradient-to-r from-purple-300 to-pink-300 rounded-full mix-blend-multiply filter blur-3xl opacity-40 animate-blob animation-delay-2000" />
+        <div className="absolute bottom-20 left-1/2 w-96 h-96 bg-gradient-to-r from-blue-300 to-purple-300 rounded-full mix-blend-multiply filter blur-3xl opacity-40 animate-blob animation-delay-4000" />
       </div>
 
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="relative z-10 max-w-lg w-full glass rounded-3xl shadow-2xl p-8 backdrop-blur-xl bg-white/80 dark:bg-gray-900/80 border border-white/20 dark:border-gray-800/20"
+        transition={{ duration: 0.6 }}
+        className="relative z-10 max-w-lg w-full"
       >
-        <motion.div
-          animate={{ y: [0, -10, 0] }}
-          transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
-        >
-          <IslaIllustration className="w-24 h-24 mx-auto mb-6" />
-        </motion.div>
-
         {mode === 'choose' && (
           <>
-            <h1 className="font-serif text-3xl font-bold text-center text-foreground mb-2">
-              Connect with Your Partner
-            </h1>
-            <p className="text-center text-muted-foreground mb-8">
-              Create a new couple journal or join your partner&apos;s
-            </p>
-            
-            <div className="bg-gradient-to-br from-rose-50 to-pink-50 dark:from-rose-950/30 dark:to-pink-950/30 rounded-xl p-4 mb-8 border border-rose-200 dark:border-rose-800">
-              <p className="text-sm text-gray-700 dark:text-gray-300">
-                <span className="font-semibold">🎯 Here&apos;s how it works:</span><br/>
-                1️⃣ Create a couple or join your partner<br/>
-                2️⃣ Share the invite code<br/>
-                3️⃣ Write entries, upload photos, build your love story together
+            {/* Premium header section */}
+            <div className="text-center mb-12">
+              <motion.div 
+                animate={{ y: [0, -8, 0] }}
+                transition={{ duration: 3, repeat: Infinity }}
+                className="mb-6"
+              >
+                <div className="w-20 h-20 mx-auto bg-gradient-to-br from-pink-500/20 to-purple-500/20 rounded-full backdrop-blur-xl border border-pink-300/30 dark:border-pink-700/30 flex items-center justify-center">
+                  <Heart className="w-10 h-10 text-pink-500" />
+                </div>
+              </motion.div>
+              <h1 className="text-5xl font-serif font-bold bg-gradient-to-r from-pink-600 to-purple-600 bg-clip-text text-transparent mb-2">
+                Begin Together
+              </h1>
+              <p className="text-lg text-slate-600 dark:text-slate-400 font-light">
+                Start your shared love story
               </p>
             </div>
 
+            {/* Steps cards */}
+            <div className="grid gap-3 mb-8">
+              {[
+                { icon: Users, label: 'Create or Join', desc: 'Connect with your partner' },
+                { icon: Copy, label: 'Share Code', desc: 'One unique invite code' },
+                { icon: Sparkles, label: 'Build Together', desc: 'Create beautiful memories' }
+              ].map((step, i) => (
+                <motion.div
+                  key={i}
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: i * 0.1 }}
+                  className="glass rounded-2xl p-4 backdrop-blur-xl bg-white/40 dark:bg-white/10 border border-white/20 dark:border-white/10 hover:border-pink-300/50 dark:hover:border-pink-500/30 transition-all"
+                >
+                  <div className="flex items-start gap-4">
+                    <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-pink-500/20 to-purple-500/20 flex items-center justify-center flex-shrink-0">
+                      <step.icon className="w-6 h-6 text-pink-600 dark:text-pink-400" />
+                    </div>
+                    <div>
+                      <p className="font-semibold text-slate-900 dark:text-white">{step.label}</p>
+                      <p className="text-sm text-slate-600 dark:text-slate-400">{step.desc}</p>
+                    </div>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+
+            {/* Action buttons */}
             <div className="space-y-3">
               <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
                 <Button
                   onClick={() => setMode('create')}
-                  className="w-full h-12 text-base bg-gradient-to-r from-pink-500 to-purple-500 hover:from-pink-600 hover:to-purple-600 shadow-lg"
+                  className="w-full h-14 text-base font-semibold bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 text-white shadow-lg hover:shadow-xl transition-all"
                   size="lg"
                 >
-                  <AnimatedHeart size={20} variant="beating" color="gradient" className="mr-2" />
+                  <Heart className="mr-2 h-5 w-5" />
                   Create New Couple
                 </Button>
               </motion.div>
@@ -222,9 +247,10 @@ export default function CouplePage() {
                 <Button
                   onClick={() => setMode('join')}
                   variant="outline"
-                  className="w-full h-12 text-base border-2"
+                  className="w-full h-14 text-base font-semibold glass backdrop-blur-xl border-2 border-white/30 dark:border-white/20 hover:border-pink-300 dark:hover:border-pink-500 bg-white/20 dark:bg-white/10 hover:bg-white/30 dark:hover:bg-white/20"
                   size="lg"
                 >
+                  <Users className="mr-2 h-5 w-5" />
                   Join Existing Couple
                 </Button>
               </motion.div>
@@ -233,35 +259,45 @@ export default function CouplePage() {
         )}
 
         {mode === 'create' && !myInviteCode && (
-          <>
-            <h1 className="font-serif text-3xl font-bold text-center text-foreground mb-2">
-              Create Your Couple Journal
-            </h1>
-            <p className="text-center text-muted-foreground mb-8">
-              Get started and invite your partner to write and share memories together
-            </p>
-            
-            <div className="bg-rose-50 dark:bg-rose-950/20 rounded-lg p-4 mb-6 border border-rose-200 dark:border-rose-800">
-              <p className="text-sm text-gray-700 dark:text-gray-300">
-                <span className="font-semibold block mb-2">✨ What happens next:</span>
-                You&apos;ll get a unique invite code to share with your partner. They&apos;ll enter it to join your couple, and you&apos;ll unlock the full dashboard to write journals, upload photos, and build your love story together.
+          <div className="glass rounded-3xl shadow-2xl p-8 backdrop-blur-xl bg-white/80 dark:bg-white/10 border border-white/30 dark:border-white/20 space-y-6">
+            <div className="text-center">
+              <h2 className="text-3xl font-serif font-bold text-slate-900 dark:text-white mb-2">
+                Create Your Couple
+              </h2>
+              <p className="text-slate-600 dark:text-slate-400">
+                Start a beautiful shared journal
               </p>
             </div>
-            
+
+            <div className="bg-gradient-to-br from-purple-500/10 to-pink-500/10 dark:from-purple-500/5 dark:to-pink-500/5 rounded-2xl p-6 border border-purple-200/30 dark:border-purple-500/20 space-y-3">
+              <div className="flex gap-3">
+                <Sparkles className="w-5 h-5 text-purple-600 dark:text-purple-400 flex-shrink-0" />
+                <div>
+                  <p className="font-semibold text-slate-900 dark:text-white mb-2">What Happens Next</p>
+                  <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
+                    We'll generate a unique 6-digit code that you can share with your partner. They'll enter it to connect, and together you'll unlock the full dashboard to write journals, upload photos, and build your love story.
+                  </p>
+                </div>
+              </div>
+            </div>
+
             <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
               <Button
                 onClick={handleCreateCouple}
                 disabled={isLoading}
-                className="w-full h-12 text-base bg-gradient-to-r from-pink-500 to-purple-500 hover:from-pink-600 hover:to-purple-600 shadow-lg"
+                className="w-full h-12 font-semibold bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 text-white shadow-lg"
                 size="lg"
               >
                 {isLoading ? (
                   <>
                     <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-                    Creating...
+                    Creating Code...
                   </>
                 ) : (
-                  'Generate Invite Code'
+                  <>
+                    <Heart className="mr-2 h-5 w-5" />
+                    Generate Invite Code
+                  </>
                 )}
               </Button>
             </motion.div>
@@ -269,129 +305,142 @@ export default function CouplePage() {
             <Button
               onClick={() => setMode('choose')}
               variant="ghost"
-              className="w-full mt-4"
+              className="w-full"
             >
               Back
             </Button>
-          </>
+          </div>
         )}
 
         {mode === 'create' && myInviteCode && (
-          <>
-            <h1 className="font-serif text-3xl font-bold text-center text-foreground mb-2">
-              Your Couple is Created! 💕
-            </h1>
-            <p className="text-center text-muted-foreground mb-6">
-              Share this code with your partner so they can join
-            </p>
+          <div className="glass rounded-3xl shadow-2xl p-8 backdrop-blur-xl bg-white/80 dark:bg-white/10 border border-white/30 dark:border-white/20 space-y-6">
+            <div className="text-center mb-4">
+              <h2 className="text-3xl font-serif font-bold text-slate-900 dark:text-white">
+                You&apos;re All Set
+              </h2>
+              <p className="text-slate-600 dark:text-slate-400 text-sm">Share this code with your partner</p>
+            </div>
 
-            <div className="bg-gradient-to-br from-pink-50 to-purple-50 dark:from-pink-950/20 dark:to-purple-950/20 rounded-2xl p-8 text-center mb-6 border border-pink-200 dark:border-pink-800">
-              <p className="text-sm text-muted-foreground mb-2">Your Invite Code</p>
+            {/* Invite code display */}
+            <motion.div
+              initial={{ scale: 0.95, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              className="bg-gradient-to-br from-pink-500/20 to-purple-500/20 dark:from-pink-500/10 dark:to-purple-500/10 rounded-3xl p-8 border border-pink-300/30 dark:border-pink-500/20 text-center"
+            >
+              <p className="text-sm font-semibold text-slate-600 dark:text-slate-400 mb-3 uppercase tracking-wider">Invite Code</p>
               <motion.p 
-                className="text-6xl font-bold font-mono tracking-wider bg-gradient-to-r from-pink-500 to-purple-500 bg-clip-text text-transparent mb-4"
-                animate={{ scale: [1, 1.05, 1] }}
+                className="text-6xl font-mono font-bold text-slate-900 dark:text-white tracking-widest mb-4"
+                animate={{ scale: [1, 1.02, 1] }}
                 transition={{ duration: 2, repeat: Infinity }}
               >
                 {myInviteCode}
               </motion.p>
-              <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                <Button
-                  onClick={copyInviteCode}
-                  variant="outline"
-                  className="mt-4"
-                >
-                  <Copy className="mr-2 h-4 w-4" />
-                  Copy Code
-                </Button>
-              </motion.div>
-            </div>
+              <p className="text-xs text-slate-500 dark:text-slate-500">This is your unique 6-digit code</p>
+            </motion.div>
 
-            <div className="bg-blue-50 dark:bg-blue-950/20 rounded-lg p-4 mb-6 border border-blue-200 dark:border-blue-800">
-              <p className="text-sm text-gray-700 dark:text-gray-300">
-                <span className="font-semibold block mb-2">📋 Share this code with your partner:</span>
-                They can enter this code in the &quot;Join Existing Couple&quot; section to connect with you.
+            <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+              <Button
+                onClick={copyInviteCode}
+                className="w-full h-12 font-semibold bg-slate-900 dark:bg-white hover:bg-slate-800 dark:hover:bg-slate-100 text-white dark:text-slate-900"
+              >
+                <Copy className="mr-2 h-5 w-5" />
+                Copy Code
+              </Button>
+            </motion.div>
+
+            <div className="bg-blue-500/10 dark:bg-blue-500/5 rounded-2xl p-4 border border-blue-300/30 dark:border-blue-500/20">
+              <p className="text-sm text-blue-900 dark:text-blue-300">
+                <span className="font-semibold block mb-2">Next Step</span>
+                Share this code with your partner so they can join your couple journal. Once they enter the code, you'll be connected and can start creating memories together.
               </p>
             </div>
-
-            <p className="text-sm text-center text-muted-foreground mb-6">
-              ⏳ Waiting for your partner to join...
-            </p>
 
             <Button
               onClick={() => router.push('/dashboard')}
-              className="w-full bg-gradient-to-r from-sage-500 to-emerald-500 hover:from-sage-600 hover:to-emerald-600"
+              className="w-full h-12 font-semibold bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white"
             >
-              Start Writing While You Wait
+              Go to Dashboard
             </Button>
-          </>
+          </div>
         )}
 
         {mode === 'join' && (
-          <>
-            <h1 className="font-serif text-3xl font-bold text-center text-foreground mb-2">
-              Join Your Partner&apos;s Journal
-            </h1>
-            <p className="text-center text-muted-foreground mb-6">
-              Your partner has created a couple journal. Enter their invite code to connect!
-            </p>
-            
-            <div className="bg-purple-50 dark:bg-purple-950/20 rounded-lg p-4 mb-6 border border-purple-200 dark:border-purple-800">
-              <p className="text-sm text-gray-700 dark:text-gray-300">
-                <span className="font-semibold block mb-2">💌 Ask your partner for:</span>
-                A 6-digit invite code that they got after creating their couple journal
+          <div className="glass rounded-3xl shadow-2xl p-8 backdrop-blur-xl bg-white/80 dark:bg-white/10 border border-white/30 dark:border-white/20 space-y-6">
+            <div className="text-center">
+              <h2 className="text-3xl font-serif font-bold text-slate-900 dark:text-white mb-2">
+                Join Your Partner
+              </h2>
+              <p className="text-slate-600 dark:text-slate-400">
+                Enter your partner's code to connect
               </p>
             </div>
 
+            {/* Tabs for code/email */}
             <div className="space-y-4">
-              <div>
-                <Label htmlFor="code" className="font-semibold">Invite Code (6 digits)</Label>
+              {/* Code input */}
+              <div className="space-y-3">
+                <Label htmlFor="code" className="font-semibold text-slate-900 dark:text-white flex items-center gap-2">
+                  <Copy className="w-4 h-4 text-pink-500" />
+                  6-Digit Code
+                </Label>
                 <Input
                   id="code"
-                  placeholder="123456"
+                  placeholder="Enter code"
                   value={inviteCode}
-                  onChange={(e) => setInviteCode(e.target.value)}
+                  onChange={(e) => setInviteCode(e.target.value.replace(/\D/g, '').slice(0, 6))}
                   maxLength={6}
-                  className="text-center text-2xl font-mono tracking-wider"
+                  className="text-center text-3xl font-mono tracking-widest h-14 glass backdrop-blur border-white/30 dark:border-white/20"
                 />
-                <Button
-                  onClick={handleJoinByCode}
-                  disabled={isLoading || inviteCode.length !== 6}
-                  className="w-full mt-2 bg-gradient-to-r from-pink-500 to-purple-500 hover:from-pink-600 hover:to-purple-600 shadow-md"
-                >
-                  {isLoading ? (
-                    <>
-                      <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-                      Joining...
-                    </>
-                  ) : (
-                    'Join with Code'
-                  )}
-                </Button>
+                <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+                  <Button
+                    onClick={handleJoinByCode}
+                    disabled={isLoading || inviteCode.length !== 6}
+                    className="w-full h-12 font-semibold bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 text-white disabled:opacity-50"
+                  >
+                    {isLoading ? (
+                      <>
+                        <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                        Joining...
+                      </>
+                    ) : (
+                      <>
+                        <Users className="mr-2 h-5 w-5" />
+                        Join with Code
+                      </>
+                    )}
+                  </Button>
+                </motion.div>
               </div>
 
-              <div className="relative">
+              {/* Divider */}
+              <div className="relative py-2">
                 <div className="absolute inset-0 flex items-center">
-                  <span className="w-full border-t" />
+                  <span className="w-full border-t border-slate-300 dark:border-slate-700" />
                 </div>
-                <div className="relative flex justify-center text-xs uppercase">
-                  <span className="bg-card px-2 text-muted-foreground">Or</span>
+                <div className="relative flex justify-center">
+                  <span className="px-2 text-sm text-slate-500 dark:text-slate-500 bg-white/80 dark:bg-white/10">or</span>
                 </div>
               </div>
 
-              <div>
-                <Label htmlFor="email" className="font-semibold">Partner&apos;s Email</Label>
+              {/* Email input */}
+              <div className="space-y-3">
+                <Label htmlFor="email" className="font-semibold text-slate-900 dark:text-white flex items-center gap-2">
+                  <Mail className="w-4 h-4 text-purple-500" />
+                  Partner&apos;s Email
+                </Label>
                 <Input
                   id="email"
                   type="email"
                   placeholder="partner@example.com"
                   value={partnerEmail}
                   onChange={(e) => setPartnerEmail(e.target.value)}
+                  className="h-12 glass backdrop-blur border-white/30 dark:border-white/20"
                 />
                 <Button
                   onClick={handleJoinByEmail}
                   disabled={isLoading || !partnerEmail.includes('@')}
                   variant="outline"
-                  className="w-full mt-2"
+                  className="w-full h-12 font-semibold glass backdrop-blur border-white/30 dark:border-white/20 hover:border-purple-300 dark:hover:border-purple-500 disabled:opacity-50"
                 >
                   {isLoading ? (
                     <>
@@ -399,7 +448,10 @@ export default function CouplePage() {
                       Joining...
                     </>
                   ) : (
-                    'Join with Email'
+                    <>
+                      <Mail className="mr-2 h-5 w-5" />
+                      Join with Email
+                    </>
                   )}
                 </Button>
               </div>
@@ -408,11 +460,11 @@ export default function CouplePage() {
             <Button
               onClick={() => setMode('choose')}
               variant="ghost"
-              className="w-full mt-4"
+              className="w-full"
             >
               Back
             </Button>
-          </>
+          </div>
         )}
       </motion.div>
     </div>
