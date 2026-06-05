@@ -232,28 +232,24 @@ export default function CouplePage() {
 
             {/* Action buttons */}
             <div className="space-y-3">
-              <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
-                <Button
-                  onClick={() => setMode('create')}
-                  className="w-full h-14 text-base font-semibold bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 text-white shadow-lg hover:shadow-xl transition-all"
-                  size="lg"
-                >
-                  <Heart className="mr-2 h-5 w-5" />
-                  Create New Couple
-                </Button>
-              </motion.div>
+              <Button
+                onClick={() => setMode('create')}
+                className="w-full h-14 text-base font-semibold bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 text-white shadow-lg hover:shadow-xl transition-all hover:scale-105 active:scale-95"
+                size="lg"
+              >
+                <Heart className="mr-2 h-5 w-5" />
+                Create New Couple
+              </Button>
 
-              <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
-                <Button
-                  onClick={() => setMode('join')}
-                  variant="outline"
-                  className="w-full h-14 text-base font-semibold glass backdrop-blur-xl border-2 border-white/30 dark:border-white/20 hover:border-pink-300 dark:hover:border-pink-500 bg-white/20 dark:bg-white/10 hover:bg-white/30 dark:hover:bg-white/20"
-                  size="lg"
-                >
-                  <Users className="mr-2 h-5 w-5" />
-                  Join Existing Couple
-                </Button>
-              </motion.div>
+              <Button
+                onClick={() => setMode('join')}
+                variant="outline"
+                className="w-full h-14 text-base font-semibold glass backdrop-blur-xl border-2 border-white/30 dark:border-white/20 hover:border-pink-300 dark:hover:border-pink-500 bg-white/20 dark:bg-white/10 hover:bg-white/30 dark:hover:bg-white/20 hover:scale-105 active:scale-95 transition-all"
+                size="lg"
+              >
+                <Users className="mr-2 h-5 w-5" />
+                Join Existing Couple
+              </Button>
             </div>
           </>
         )}
@@ -281,26 +277,24 @@ export default function CouplePage() {
               </div>
             </div>
 
-            <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
-              <Button
-                onClick={handleCreateCouple}
-                disabled={isLoading}
-                className="w-full h-12 font-semibold bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 text-white shadow-lg"
-                size="lg"
-              >
-                {isLoading ? (
-                  <>
-                    <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-                    Creating Code...
-                  </>
-                ) : (
-                  <>
-                    <Heart className="mr-2 h-5 w-5" />
-                    Generate Invite Code
-                  </>
-                )}
-              </Button>
-            </motion.div>
+            <Button
+              onClick={handleCreateCouple}
+              disabled={isLoading}
+              className="w-full h-12 font-semibold bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 text-white shadow-lg hover:scale-105 active:scale-95 transition-all disabled:opacity-50 disabled:hover:scale-100"
+              size="lg"
+            >
+              {isLoading ? (
+                <>
+                  <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                  Creating Code...
+                </>
+              ) : (
+                <>
+                  <Heart className="mr-2 h-5 w-5" />
+                  Generate Invite Code
+                </>
+              )}
+            </Button>
 
             <Button
               onClick={() => setMode('choose')}
@@ -338,15 +332,13 @@ export default function CouplePage() {
               <p className="text-xs text-slate-500 dark:text-slate-500">This is your unique 6-digit code</p>
             </motion.div>
 
-            <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
-              <Button
-                onClick={copyInviteCode}
-                className="w-full h-12 font-semibold bg-slate-900 dark:bg-white hover:bg-slate-800 dark:hover:bg-slate-100 text-white dark:text-slate-900"
-              >
-                <Copy className="mr-2 h-5 w-5" />
-                Copy Code
-              </Button>
-            </motion.div>
+            <Button
+              onClick={copyInviteCode}
+              className="w-full h-12 font-semibold bg-slate-900 dark:bg-white hover:bg-slate-800 dark:hover:bg-slate-100 text-white dark:text-slate-900 hover:scale-105 active:scale-95 transition-all"
+            >
+              <Copy className="mr-2 h-5 w-5" />
+              Copy Code
+            </Button>
 
             <div className="bg-blue-500/10 dark:bg-blue-500/5 rounded-2xl p-4 border border-blue-300/30 dark:border-blue-500/20">
               <p className="text-sm text-blue-900 dark:text-blue-300">
@@ -391,25 +383,23 @@ export default function CouplePage() {
                   maxLength={6}
                   className="text-center text-3xl font-mono tracking-widest h-14 glass backdrop-blur border-white/30 dark:border-white/20"
                 />
-                <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
-                  <Button
-                    onClick={handleJoinByCode}
-                    disabled={isLoading || inviteCode.length !== 6}
-                    className="w-full h-12 font-semibold bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 text-white disabled:opacity-50"
-                  >
-                    {isLoading ? (
-                      <>
-                        <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-                        Joining...
-                      </>
-                    ) : (
-                      <>
-                        <Users className="mr-2 h-5 w-5" />
-                        Join with Code
-                      </>
-                    )}
-                  </Button>
-                </motion.div>
+                <Button
+                  onClick={handleJoinByCode}
+                  disabled={isLoading || inviteCode.length !== 6}
+                  className="w-full h-12 font-semibold bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 text-white disabled:opacity-50 disabled:hover:scale-100 hover:scale-105 active:scale-95 transition-all"
+                >
+                  {isLoading ? (
+                    <>
+                      <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                      Joining...
+                    </>
+                  ) : (
+                    <>
+                      <Users className="mr-2 h-5 w-5" />
+                      Join with Code
+                    </>
+                  )}
+                </Button>
               </div>
 
               {/* Divider */}
