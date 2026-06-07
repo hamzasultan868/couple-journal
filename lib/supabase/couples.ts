@@ -10,35 +10,61 @@ export async function createCouple(
   userName: string,
   userPhoto: string | null
 ): Promise<Couple> {
+  if (!userId) {
+    throw new Error('User ID is required to create a couple')
+  }
+  
   const inviteCode = generateInviteCode()
+  console.log('[createCouple] Creating couple with invite code:', inviteCode)
   
-  const { data, error } = await (supabase
-    .from('couples')
-    .insert({
-      invite_code: inviteCode,
-      created_by: userId,
-      partner1_id: userId,
-      partner1_name: userName,
-      partner1_photo: userPhoto,
-    } as any)
-    .select()
-    .single() as any)
-  
-  if (error) throw error
-  
-  await updateUserCoupleId(userId, (data as any).id)
-  
-  return {
-    id: (data as any).id,
-    inviteCode: (data as any).invite_code,
-    createdAt: new Date((data as any).created_at),
-    createdBy: (data as any).created_by,
-    partner1Id: (data as any).partner1_id,
-    partner1Name: (data as any).partner1_name,
-    partner1Photo: (data as any).partner1_photo,
-    partner2Id: (data as any).partner2_id,
-    partner2Name: (data as any).partner2_name,
-    partner2Photo: (data as any).partner2_photo,
+  try {
+    const { data, error } = await (supabase
+      .from('couples')
+      .insert({
+        invite_code: inviteCode,
+        created_by: userId,
+        partner1_id: userId,
+        partner1_name: userName,
+        partner1_photo: userPhoto,
+      } as any)
+      .select()
+      .single() as any)
+    
+    if (error) {
+      console.error('[createCouple] Insert error:', error)
+      throw new Error(`Failed to create couple: ${error.message}`)
+    }
+    
+    if (!data) {
+      throw new Error('No data returned from couple creation')
+    }
+    
+    console.log('[createCouple] Couple created:', (data as any).id)
+    
+    // Update user's couple_id
+    try {
+      await updateUserCoupleId(userId, (data as any).id)
+      console.log('[createCouple] User couple_id updated')
+    } catch (updateError) {
+      console.error('[createCouple] Error updating user couple_id:', updateError)
+      // Don't throw here - couple was created successfully
+    }
+    
+    return {
+      id: (data as any).id,
+      inviteCode: (data as any).invite_code,
+      createdAt: new Date((data as any).created_at),
+      createdBy: (data as any).created_by,
+      partner1Id: (data as any).partner1_id,
+      partner1Name: (data as any).partner1_name,
+      partner1Photo: (data as any).partner1_photo,
+      partner2Id: (data as any).partner2_id,
+      partner2Name: (data as any).partner2_name,
+      partner2Photo: (data as any).partner2_photo,
+    }
+  } catch (error) {
+    console.error('[createCouple] Unexpected error:', error)
+    throw error
   }
 }
 
@@ -48,45 +74,79 @@ export async function joinCoupleByCode(
   userName: string,
   userPhoto: string | null
 ): Promise<Couple | null> {
-  // Find couple by invite code
-  const { data: coupleData, error } = await ((supabase
-    .from('couples') as any)
-    .select('*')
-    .eq('invite_code', code)
-    .single())
+  if (!code || !userId) {
+    console.warn('[joinCoupleByCode] Missing code or userId')
+    return null
+  }
   
-  if (error || !coupleData) return null
+  console.log('[joinCoupleByCode] Attempting to join with code:', code)
   
-  // Check if couple is already full
-  if ((coupleData as any).partner2_id) return null
-  
-  // Add second partner
-  const { data: updatedCouple, error: updateError } = await ((supabase
-    .from('couples') as any)
-    .update({
-      partner2_id: userId,
-      partner2_name: userName,
-      partner2_photo: userPhoto,
-    })
-    .eq('id', (coupleData as any).id)
-    .select()
-    .single())
-  
-  if (updateError) throw updateError
-  
-  await updateUserCoupleId(userId, (coupleData as any).id)
-  
-  return {
-    id: (updatedCouple as any).id,
-    inviteCode: (updatedCouple as any).invite_code,
-    createdAt: new Date((updatedCouple as any).created_at),
-    createdBy: (updatedCouple as any).created_by,
-    partner1Id: (updatedCouple as any).partner1_id,
-    partner1Name: (updatedCouple as any).partner1_name,
-    partner1Photo: (updatedCouple as any).partner1_photo,
-    partner2Id: (updatedCouple as any).partner2_id,
-    partner2Name: (updatedCouple as any).partner2_name,
-    partner2Photo: (updatedCouple as any).partner2_photo,
+  try {
+    // Find couple by invite code
+    const { data: coupleData, error } = await ((supabase
+      .from('couples') as any)
+      .select('*')
+      .eq('invite_code', code)
+      .single())
+    
+    if (error) {
+      console.error('[joinCoupleByCode] Error finding couple:', error)
+      return null
+    }
+    
+    if (!coupleData) {
+      console.warn('[joinCoupleByCode] No couple found with code:', code)
+      return null
+    }
+    
+    // Check if couple is already full
+    if ((coupleData as any).partner2_id) {
+      console.warn('[joinCoupleByCode] Couple is already full')
+      return null
+    }
+    
+    console.log('[joinCoupleByCode] Found couple, adding second partner')
+    
+    // Add second partner
+    const { data: updatedCouple, error: updateError } = await ((supabase
+      .from('couples') as any)
+      .update({
+        partner2_id: userId,
+        partner2_name: userName,
+        partner2_photo: userPhoto,
+      })
+      .eq('id', (coupleData as any).id)
+      .select()
+      .single())
+    
+    if (updateError) {
+      console.error('[joinCoupleByCode] Error updating couple:', updateError)
+      throw updateError
+    }
+    
+    if (!updatedCouple) {
+      throw new Error('No data returned from couple update')
+    }
+    
+    await updateUserCoupleId(userId, (coupleData as any).id)
+    
+    console.log('[joinCoupleByCode] Successfully joined couple:', (updatedCouple as any).id)
+    
+    return {
+      id: (updatedCouple as any).id,
+      inviteCode: (updatedCouple as any).invite_code,
+      createdAt: new Date((updatedCouple as any).created_at),
+      createdBy: (updatedCouple as any).created_by,
+      partner1Id: (updatedCouple as any).partner1_id,
+      partner1Name: (updatedCouple as any).partner1_name,
+      partner1Photo: (updatedCouple as any).partner1_photo,
+      partner2Id: (updatedCouple as any).partner2_id,
+      partner2Name: (updatedCouple as any).partner2_name,
+      partner2Photo: (updatedCouple as any).partner2_photo,
+    }
+  } catch (error) {
+    console.error('[joinCoupleByCode] Unexpected error:', error)
+    throw error
   }
 }
 
@@ -96,76 +156,147 @@ export async function joinCoupleByEmail(
   userName: string,
   userPhoto: string | null
 ): Promise<Couple | null> {
-  // Find user by email
-  const { data: partnerUser, error: userError } = await ((supabase
-    .from('users') as any)
-    .select('*')
-    .eq('email', partnerEmail)
-    .single())
+  if (!partnerEmail || !userId) {
+    console.warn('[joinCoupleByEmail] Missing email or userId')
+    return null
+  }
   
-  if (userError || !partnerUser || !(partnerUser as any).couple_id) return null
+  console.log('[joinCoupleByEmail] Attempting to join with partner email:', partnerEmail)
   
-  // Get the couple
-  const { data: coupleData, error } = await ((supabase
-    .from('couples') as any)
-    .select('*')
-    .eq('id', (partnerUser as any).couple_id)
-    .single())
-  
-  if (error || !coupleData) return null
-  
-  // Check if couple is already full
-  if ((coupleData as any).partner2_id) return null
-  
-  // Add second partner
-  const { data: updatedCouple, error: updateError } = await ((supabase
-    .from('couples') as any)
-    .update({
-      partner2_id: userId,
-      partner2_name: userName,
-      partner2_photo: userPhoto,
-    })
-    .eq('id', (coupleData as any).id)
-    .select()
-    .single())
-  
-  if (updateError) throw updateError
-  
-  await updateUserCoupleId(userId, (coupleData as any).id)
-  
-  return {
-    id: (updatedCouple as any).id,
-    inviteCode: (updatedCouple as any).invite_code,
-    createdAt: new Date((updatedCouple as any).created_at),
-    createdBy: (updatedCouple as any).created_by,
-    partner1Id: (updatedCouple as any).partner1_id,
-    partner1Name: (updatedCouple as any).partner1_name,
-    partner1Photo: (updatedCouple as any).partner1_photo,
-    partner2Id: (updatedCouple as any).partner2_id,
-    partner2Name: (updatedCouple as any).partner2_name,
-    partner2Photo: (updatedCouple as any).partner2_photo,
+  try {
+    // Find user by email
+    const { data: partnerUser, error: userError } = await ((supabase
+      .from('users') as any)
+      .select('*')
+      .eq('email', partnerEmail)
+      .single())
+    
+    if (userError) {
+      console.error('[joinCoupleByEmail] Error finding user:', userError)
+      return null
+    }
+    
+    if (!partnerUser) {
+      console.warn('[joinCoupleByEmail] Partner not found with email:', partnerEmail)
+      return null
+    }
+    
+    if (!(partnerUser as any).couple_id) {
+      console.warn('[joinCoupleByEmail] Partner has not created a couple yet')
+      return null
+    }
+    
+    console.log('[joinCoupleByEmail] Found partner, retrieving couple')
+    
+    // Get the couple
+    const { data: coupleData, error } = await ((supabase
+      .from('couples') as any)
+      .select('*')
+      .eq('id', (partnerUser as any).couple_id)
+      .single())
+    
+    if (error) {
+      console.error('[joinCoupleByEmail] Error finding couple:', error)
+      return null
+    }
+    
+    if (!coupleData) {
+      console.warn('[joinCoupleByEmail] Couple not found')
+      return null
+    }
+    
+    // Check if couple is already full
+    if ((coupleData as any).partner2_id) {
+      console.warn('[joinCoupleByEmail] Couple is already full')
+      return null
+    }
+    
+    console.log('[joinCoupleByEmail] Adding second partner')
+    
+    // Add second partner
+    const { data: updatedCouple, error: updateError } = await ((supabase
+      .from('couples') as any)
+      .update({
+        partner2_id: userId,
+        partner2_name: userName,
+        partner2_photo: userPhoto,
+      })
+      .eq('id', (coupleData as any).id)
+      .select()
+      .single())
+    
+    if (updateError) {
+      console.error('[joinCoupleByEmail] Error updating couple:', updateError)
+      throw updateError
+    }
+    
+    if (!updatedCouple) {
+      throw new Error('No data returned from couple update')
+    }
+    
+    await updateUserCoupleId(userId, (coupleData as any).id)
+    
+    console.log('[joinCoupleByEmail] Successfully joined couple:', (updatedCouple as any).id)
+    
+    return {
+      id: (updatedCouple as any).id,
+      inviteCode: (updatedCouple as any).invite_code,
+      createdAt: new Date((updatedCouple as any).created_at),
+      createdBy: (updatedCouple as any).created_by,
+      partner1Id: (updatedCouple as any).partner1_id,
+      partner1Name: (updatedCouple as any).partner1_name,
+      partner1Photo: (updatedCouple as any).partner1_photo,
+      partner2Id: (updatedCouple as any).partner2_id,
+      partner2Name: (updatedCouple as any).partner2_name,
+      partner2Photo: (updatedCouple as any).partner2_photo,
+    }
+  } catch (error) {
+    console.error('[joinCoupleByEmail] Unexpected error:', error)
+    throw error
   }
 }
 
 export async function getCoupleById(coupleId: string): Promise<Couple | null> {
-  const { data, error } = await ((supabase
-    .from('couples') as any)
-    .select('*')
-    .eq('id', coupleId)
-    .single())
+  if (!coupleId) {
+    console.warn('[getCoupleById] coupleId is empty')
+    return null
+  }
   
-  if (error || !data) return null
+  console.log('[getCoupleById] Fetching couple:', coupleId)
   
-  return {
-    id: (data as any).id,
-    inviteCode: (data as any).invite_code,
-    createdAt: new Date((data as any).created_at),
-    createdBy: (data as any).created_by,
-    partner1Id: (data as any).partner1_id,
-    partner1Name: (data as any).partner1_name,
-    partner1Photo: (data as any).partner1_photo,
-    partner2Id: (data as any).partner2_id,
-    partner2Name: (data as any).partner2_name,
-    partner2Photo: (data as any).partner2_photo,
+  try {
+    const { data, error } = await ((supabase
+      .from('couples') as any)
+      .select('*')
+      .eq('id', coupleId)
+      .single())
+    
+    if (error) {
+      console.error('[getCoupleById] Error:', error)
+      return null
+    }
+    
+    if (!data) {
+      console.warn('[getCoupleById] No data returned')
+      return null
+    }
+    
+    console.log('[getCoupleById] Couple found:', (data as any).id)
+    
+    return {
+      id: (data as any).id,
+      inviteCode: (data as any).invite_code,
+      createdAt: new Date((data as any).created_at),
+      createdBy: (data as any).created_by,
+      partner1Id: (data as any).partner1_id,
+      partner1Name: (data as any).partner1_name,
+      partner1Photo: (data as any).partner1_photo,
+      partner2Id: (data as any).partner2_id,
+      partner2Name: (data as any).partner2_name,
+      partner2Photo: (data as any).partner2_photo,
+    }
+  } catch (error) {
+    console.error('[getCoupleById] Unexpected error:', error)
+    return null
   }
 }

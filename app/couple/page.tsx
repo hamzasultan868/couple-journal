@@ -47,24 +47,53 @@ export default function CouplePage() {
   }, [session, sessionStatus, couple, authLoading, router])
 
   const handleCreateCouple = async () => {
-    if (!user) return
+    if (!user) {
+      console.log('[handleCreateCouple] User not loaded yet, skipping')
+      toast({
+        title: 'Please wait',
+        description: 'Still loading your profile...',
+        variant: 'destructive',
+      })
+      return
+    }
+    
+    if (!user.id) {
+      console.log('[handleCreateCouple] User ID missing')
+      toast({
+        title: 'Error',
+        description: 'User information is missing. Please refresh and try again.',
+        variant: 'destructive',
+      })
+      return
+    }
+    
     setIsLoading(true)
+    console.log('[handleCreateCouple] Starting couple creation for user:', user.id)
+    
     try {
       const newCouple = await createCouple(user.id, user.displayName || 'You', user.photoURL)
+      console.log('[handleCreateCouple] Couple created successfully:', newCouple.id)
+      
       setCouple(newCouple)
       setMyInviteCode(newCouple.inviteCode)
       triggerConfetti()
+      
       toast({
         title: 'Couple created!',
         description: 'Share your invite code with your partner',
       })
+      
       // Redirect to dashboard after couple is created
-      setTimeout(() => router.push('/dashboard'), 500)
+      setTimeout(() => {
+        console.log('[handleCreateCouple] Redirecting to dashboard')
+        router.push('/dashboard')
+      }, 500)
     } catch (error) {
-      console.error('Error creating couple:', error)
+      console.error('[handleCreateCouple] Error creating couple:', error)
+      const errorMessage = error instanceof Error ? error.message : 'Something went wrong. Please try again.'
       toast({
         title: 'Failed to create couple',
-        description: 'Something went wrong. Please try again.',
+        description: errorMessage,
         variant: 'destructive',
       })
     } finally {
