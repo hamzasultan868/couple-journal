@@ -18,6 +18,10 @@ export async function createCouple(
   console.log('[createCouple] Creating couple with invite code:', inviteCode)
   
   try {
+    // Add timeout handling
+    const controller = new AbortController()
+    const timeoutId = setTimeout(() => controller.abort(), 10000) // 10 second timeout
+    
     const { data, error } = await (supabase
       .from('couples')
       .insert({
@@ -30,8 +34,20 @@ export async function createCouple(
       .select()
       .single() as any)
     
+    clearTimeout(timeoutId)
+    
     if (error) {
       console.error('[createCouple] Insert error:', error)
+      
+      // Provide more specific error messages
+      if (error.message?.includes('duplicate key')) {
+        throw new Error('This invite code already exists. Please try again.')
+      } else if (error.message?.includes('permission')) {
+        throw new Error('You do not have permission to create a couple. Please check your account.')
+      } else if (error.message?.includes('network') || error.message?.includes('Failed to fetch')) {
+        throw new Error('Network error. Please check your internet connection and try again.')
+      }
+      
       throw new Error(`Failed to create couple: ${error.message}`)
     }
     
@@ -64,6 +80,12 @@ export async function createCouple(
     }
   } catch (error) {
     console.error('[createCouple] Unexpected error:', error)
+    
+    // Handle specific error types
+    if (error instanceof TypeError && error.message.includes('Failed to fetch')) {
+      throw new Error('Network connection error. Please check your internet and try again.')
+    }
+    
     throw error
   }
 }

@@ -90,7 +90,20 @@ export default function CouplePage() {
       }, 500)
     } catch (error) {
       console.error('[handleCreateCouple] Error creating couple:', error)
-      const errorMessage = error instanceof Error ? error.message : 'Something went wrong. Please try again.'
+      
+      let errorMessage = 'Something went wrong. Please try again.'
+      
+      if (error instanceof TypeError && error.message.includes('Failed to fetch')) {
+        errorMessage = 'Network error. Please check your internet connection and try again.'
+      } else if (error instanceof Error) {
+        errorMessage = error.message
+      }
+      
+      // Remove 'TypeError: ' prefix if present
+      if (errorMessage.startsWith('TypeError: ')) {
+        errorMessage = errorMessage.replace('TypeError: ', '')
+      }
+      
       toast({
         title: 'Failed to create couple',
         description: errorMessage,

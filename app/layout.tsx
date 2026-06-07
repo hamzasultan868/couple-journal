@@ -4,7 +4,7 @@ import { Inter, Playfair_Display } from "next/font/google"
 import "./globals.css"
 import { Toaster } from "@/components/ui/toaster"
 import { Providers } from "./providers"
-import { CursorGlow } from "@/components/CursorGlow"
+import { CursorGlowOptimized } from "@/components/CursorGlowOptimized"
 
 const inter = Inter({ 
   subsets: ["latin"],
@@ -31,7 +31,7 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body className={`${inter.variable} ${playfair.variable} font-sans`}>
         <Providers>
-          <CursorGlow />
+          <CursorGlowOptimized />
           {children}
           <Toaster />
         </Providers>
