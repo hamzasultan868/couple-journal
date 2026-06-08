@@ -25,3 +25,9 @@ export { AnimatedHeart } from './AnimatedHeart'
 export { CoupleIllustration } from './CoupleIllustration'
 export { LoadingAnimation } from './LoadingAnimation'
 export { SuccessAnimation } from './SuccessAnimation'
+
+// Landing Page Components
+export { LandingHero } from './LandingHero'
+export { FeaturesSection } from './FeaturesSection'
+export { TestimonialsSection } from './TestimonialsSection'
+export { CTASection } from './CTASection'
