@@ -54,57 +54,57 @@ ALTER TABLE journal_entries ENABLE ROW LEVEL SECURITY;
 
 -- 6. Create RLS Policies for users table
 CREATE POLICY "Users can view their own data" ON users
-  FOR SELECT USING (auth.uid() = id);
+  FOR SELECT USING (auth.uid()::uuid = id);
 
 CREATE POLICY "Users can update their own data" ON users
-  FOR UPDATE USING (auth.uid() = id);
+  FOR UPDATE USING (auth.uid()::uuid = id);
 
 CREATE POLICY "Users can insert their own data" ON users
-  FOR INSERT WITH CHECK (auth.uid() = id);
+  FOR INSERT WITH CHECK (auth.uid()::uuid = id);
 
 -- 7. Create RLS Policies for couples table
 CREATE POLICY "Users can view couples they are part of" ON couples
   FOR SELECT USING (
-    auth.uid() = partner1_id OR auth.uid() = partner2_id
+    auth.uid()::uuid = partner1_id OR auth.uid()::uuid = partner2_id
   );
 
 CREATE POLICY "Users can update couples they are part of" ON couples
   FOR UPDATE USING (
-    auth.uid() = partner1_id OR auth.uid() = partner2_id
+    auth.uid()::uuid = partner1_id OR auth.uid()::uuid = partner2_id
   );
 
 CREATE POLICY "Users can insert couples (create new couple)" ON couples
-  FOR INSERT WITH CHECK (auth.uid() = partner1_id);
+  FOR INSERT WITH CHECK (auth.uid()::uuid = partner1_id);
 
 -- 8. Create RLS Policies for journal_entries table
 CREATE POLICY "Users can view entries from their couple" ON journal_entries
   FOR SELECT USING (
     couple_id IN (
       SELECT id FROM couples 
-      WHERE partner1_id = auth.uid() OR partner2_id = auth.uid()
+      WHERE partner1_id = auth.uid()::uuid OR partner2_id = auth.uid()::uuid
     )
   );
 
 CREATE POLICY "Users can insert entries to their couple" ON journal_entries
   FOR INSERT WITH CHECK (
-    auth.uid() = author_id AND
+    auth.uid()::uuid = author_id AND
     couple_id IN (
       SELECT id FROM couples 
-      WHERE partner1_id = auth.uid() OR partner2_id = auth.uid()
+      WHERE partner1_id = auth.uid()::uuid OR partner2_id = auth.uid()::uuid
     )
   );
 
 CREATE POLICY "Users can update their own entries" ON journal_entries
   FOR UPDATE USING (
-    auth.uid() = author_id OR
+    auth.uid()::uuid = author_id OR
     couple_id IN (
       SELECT id FROM couples 
-      WHERE partner1_id = auth.uid() OR partner2_id = auth.uid()
+      WHERE partner1_id = auth.uid()::uuid OR partner2_id = auth.uid()::uuid
     )
   );
 
 CREATE POLICY "Users can delete their own entries" ON journal_entries
-  FOR DELETE USING (auth.uid() = author_id);
+  FOR DELETE USING (auth.uid()::uuid = author_id);
 
 -- 9. Create storage bucket for journal images (if not exists)
 -- Note: You'll need to do this via Supabase UI:
