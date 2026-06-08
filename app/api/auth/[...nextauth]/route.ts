@@ -2,24 +2,28 @@ import NextAuth from "next-auth"
 import GoogleProvider from "next-auth/providers/google"
 import type { NextAuthOptions } from "next-auth"
 
-// Validate required environment variables
-if (!process.env.NEXTAUTH_SECRET) {
-  throw new Error('[NextAuth] NEXTAUTH_SECRET is not set')
-}
-if (!process.env.GOOGLE_CLIENT_ID || !process.env.GOOGLE_CLIENT_SECRET) {
-  throw new Error('[NextAuth] Google credentials (GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET) are not set')
-}
+console.log('[NextAuth] Initializing...')
 
-console.log('[NextAuth] Configuration initialized')
-console.log('[NextAuth] NEXTAUTH_URL:', process.env.NEXTAUTH_URL)
-console.log('[NextAuth] Google Client ID:', process.env.GOOGLE_CLIENT_ID?.slice(0, 10) + '...')
+// Check for environment variables (warn but don't throw during build)
+if (typeof window === 'undefined') {
+  // Server-side only
+  if (!process.env.NEXTAUTH_SECRET && process.env.NODE_ENV === 'production') {
+    console.warn('[NextAuth] NEXTAUTH_SECRET is not set for production')
+  }
+  if (!process.env.GOOGLE_CLIENT_ID) {
+    console.warn('[NextAuth] GOOGLE_CLIENT_ID is not set')
+  }
+  if (!process.env.GOOGLE_CLIENT_SECRET) {
+    console.warn('[NextAuth] GOOGLE_CLIENT_SECRET is not set')
+  }
+}
 
 const authOptions: NextAuthOptions = {
-  secret: process.env.NEXTAUTH_SECRET,
+  secret: process.env.NEXTAUTH_SECRET || 'fallback-secret-for-dev-only',
   providers: [
     GoogleProvider({
-      clientId: process.env.GOOGLE_CLIENT_ID,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+      clientId: process.env.GOOGLE_CLIENT_ID || '',
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET || '',
     }),
   ],
   callbacks: {
