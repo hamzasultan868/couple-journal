@@ -4,9 +4,9 @@
 -- 1. Create couples table FIRST (no FK to users yet)
 CREATE TABLE IF NOT EXISTS couples (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  partner1_id UUID NOT NULL,
+  partner1_id TEXT NOT NULL,
   partner1_name TEXT NOT NULL,
-  partner2_id UUID,
+  partner2_id TEXT,
   partner2_name TEXT,
   invite_code TEXT UNIQUE,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
@@ -15,7 +15,7 @@ CREATE TABLE IF NOT EXISTS couples (
 
 -- 2. Create users table (can now reference couples)
 CREATE TABLE IF NOT EXISTS users (
-  id UUID PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,
+  id TEXT PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,
   email TEXT UNIQUE NOT NULL,
   display_name TEXT,
   photo_url TEXT,
@@ -37,10 +37,10 @@ CREATE TABLE IF NOT EXISTS journal_entries (
   couple_id UUID NOT NULL REFERENCES couples(id) ON DELETE CASCADE,
   text TEXT,
   image_urls TEXT[] DEFAULT ARRAY[]::TEXT[],
-  author_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+  author_id TEXT NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
   author_name TEXT NOT NULL,
   author_photo TEXT,
-  contributors UUID[] DEFAULT ARRAY[]::UUID[],
+  contributors TEXT[] DEFAULT ARRAY[]::TEXT[],
   created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
