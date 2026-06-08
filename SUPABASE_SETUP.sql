@@ -117,21 +117,12 @@ CREATE POLICY "Users can delete their own entries" ON journal_entries
 -- Policy to allow public read access
 -- Policy to allow users to delete their own uploads
 
--- 10. Optional: Create storage policies
-CREATE POLICY "Users can upload images to journal-images" ON storage.objects
-  FOR INSERT WITH CHECK (
-    bucket_id = 'journal-images' AND
-    auth.role() = 'authenticated'
-  );
-
-CREATE POLICY "Users can read all images in journal-images" ON storage.objects
-  FOR SELECT USING (bucket_id = 'journal-images');
-
-CREATE POLICY "Users can delete their own images" ON storage.objects
-  FOR DELETE USING (
-    bucket_id = 'journal-images' AND
-    auth.uid()::text = (storage.foldername(name))[1]
-  );
+-- 10. Optional: Create storage policies via Supabase UI
+-- Note: Storage policies should be created through the Supabase Dashboard UI:
+-- 1. Go to Storage → journal-images bucket → Policies tab
+-- 2. Add Policy: "Users can upload" - INSERT - authenticated users
+-- 3. Add Policy: "Public read" - SELECT - anyone
+-- 4. Add Policy: "Users can delete own" - DELETE - authenticated users
 
 -- 11. Create updated_at trigger for automatic timestamp updates
 CREATE OR REPLACE FUNCTION update_updated_at_column()
