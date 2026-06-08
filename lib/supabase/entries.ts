@@ -12,30 +12,48 @@ export async function createEntry(
   authorPhoto: string | null,
   images: File[] = []
 ): Promise<JournalEntry> {
+  console.log('[createEntry] Starting entry creation:', { coupleId, textLength: text.length, imageCount: images.length })
+
   // Upload images
   const imageUrls = await Promise.all(
     images.map(image => uploadImage(coupleId, image))
   )
+
+  console.log('[createEntry] Images uploaded:', { count: imageUrls.length })
   
   const now = new Date().toISOString()
   
+  const entryData = {
+    couple_id: coupleId,
+    text,
+    image_urls: imageUrls,
+    created_at: now,
+    updated_at: now,
+    author_id: authorId,
+    author_name: authorName,
+    author_photo: authorPhoto,
+    contributors: [authorId],
+  } as any
+
+  console.log('[createEntry] Inserting entry data:', { ...entryData, text: entryData.text.slice(0, 50) })
+
   const { data, error } = await (supabase
     .from('journal_entries')
-    .insert({
-      couple_id: coupleId,
-      text,
-      image_urls: imageUrls,
-      created_at: now,
-      updated_at: now,
-      author_id: authorId,
-      author_name: authorName,
-      author_photo: authorPhoto,
-      contributors: [authorId],
-    } as any)
+    .insert(entryData)
     .select()
     .single() as any)
   
-  if (error) throw error
+  if (error) {
+    console.error('[createEntry] Error inserting entry:', {
+      code: error.code,
+      message: error.message,
+      details: (error as any).details,
+      hint: (error as any).hint,
+    })
+    throw error
+  }
+
+  console.log('[createEntry] Entry created successfully:', { id: (data as any).id })
   
   return {
     id: (data as any).id,

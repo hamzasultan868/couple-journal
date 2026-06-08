@@ -35,7 +35,16 @@ export function NewEntryDialog({
   const { toast } = useToast()
 
   const handleSubmit = async () => {
-    if (!user || !couple) return
+    if (!user || !couple) {
+      console.error('[NewEntryDialog] Missing user or couple:', { user, couple })
+      toast({
+        title: 'Error',
+        description: 'User or couple data not found. Please refresh and try again.',
+        variant: 'destructive',
+      })
+      return
+    }
+
     if (!text.trim() && images.length === 0) {
       toast({
         title: 'Nothing to save',
@@ -44,6 +53,14 @@ export function NewEntryDialog({
       })
       return
     }
+
+    console.log('[NewEntryDialog] Submitting entry:', {
+      coupleId: couple.id,
+      textLength: text.length,
+      imageCount: images.length,
+      userId: user.id,
+      userName: user.displayName,
+    })
 
     setIsSubmitting(true)
     try {
@@ -56,6 +73,7 @@ export function NewEntryDialog({
         images
       )
 
+      console.log('[NewEntryDialog] Entry created successfully')
       toast({
         title: 'Memory saved!',
         description: 'Your journal entry has been added',
@@ -65,10 +83,16 @@ export function NewEntryDialog({
       setImages([])
       onOpenChange(false)
     } catch (error) {
-      console.error('Error creating entry:', error)
+      console.error('[NewEntryDialog] Error creating entry:', {
+        error,
+        message: error instanceof Error ? error.message : String(error),
+        stack: error instanceof Error ? error.stack : undefined,
+      })
       toast({
         title: 'Failed to save',
-        description: 'Something went wrong. Please try again.',
+        description: error instanceof Error 
+          ? `${error.message.slice(0, 100)}` 
+          : 'Something went wrong. Please try again.',
         variant: 'destructive',
       })
     } finally {

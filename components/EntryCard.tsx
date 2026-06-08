@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { Avatar, AvatarImage, AvatarFallback } from './ui/avatar'
 import { formatRelativeTime, getInitials } from '@/lib/utils'
 import type { JournalEntry } from '@/lib/supabase/types'
-import { useState, useRef } from 'react'
+import { useState } from 'react'
 import { Dialog, DialogContent } from './ui/dialog'
 import Image from 'next/image'
 import { Trash2, Heart } from 'lucide-react'
@@ -21,20 +21,9 @@ export function EntryCard({ entry, onDelete }: EntryCardProps) {
   const [selectedImage, setSelectedImage] = useState<string | null>(null)
   const [liked, setLiked] = useState(false)
   const [likeCount, setLikeCount] = useState(0)
-  const [tilt, setTilt] = useState({ x: 0, y: 0 })
-  const [hovered, setHovered] = useState(false)
-  const cardRef = useRef<HTMLDivElement>(null)
   const { user } = useStore()
   const isAuthor = user?.id === entry.authorId
   const hasMultipleContributors = entry.contributors.length > 1
-
-  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (!cardRef.current) return
-    const rect = cardRef.current.getBoundingClientRect()
-    const x = ((e.clientY - rect.top) / rect.height - 0.5) * 8
-    const y = -((e.clientX - rect.left) / rect.width - 0.5) * 8
-    setTilt({ x, y })
-  }
 
   const handleLike = () => {
     setLiked(l => !l)
@@ -44,54 +33,36 @@ export function EntryCard({ entry, onDelete }: EntryCardProps) {
   return (
     <>
       <motion.div
-        ref={cardRef}
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        onMouseEnter={() => setHovered(true)}
-        onMouseLeave={() => { setHovered(false); setTilt({ x: 0, y: 0 }) }}
-        onMouseMove={handleMouseMove}
-        style={{ perspective: 1000 }}
+        whileHover={{ y: -2 }}
+        transition={{ duration: 0.3 }}
       >
-        <motion.div
-          className={`bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm rounded-3xl p-6 border transition-shadow duration-300 ${
-            hasMultipleContributors
-              ? 'border-pink-200 dark:border-pink-800'
-              : 'border-gray-100 dark:border-gray-800'
-          }`}
-          animate={{
-            rotateX: tilt.x,
-            rotateY: tilt.y,
-            boxShadow: hovered
-              ? hasMultipleContributors
-                ? '0 20px 40px rgba(244,63,94,0.15), 0 0 30px rgba(168,85,247,0.1)'
-                : '0 20px 40px rgba(0,0,0,0.1)'
-              : '0 4px 16px rgba(0,0,0,0.06)',
-            y: hovered ? -3 : 0,
-          }}
-          transition={{ duration: 0.15, ease: 'easeOut' }}
-          style={{ transformStyle: 'preserve-3d' }}
+        <div className={`p-6 rounded-2xl backdrop-blur-xl bg-gradient-to-br border transition-all duration-300 ${
+          hasMultipleContributors
+            ? 'from-white/15 to-white/5 border-pink-500/30 hover:border-pink-500/50 hover:from-white/20'
+            : 'from-white/10 to-white/5 border-white/20 hover:border-white/30 hover:from-white/15'
+        }`}
         >
           {/* Header */}
           <div className="flex items-start justify-between mb-4">
             <div className="flex items-center gap-3">
-              <motion.div whileHover={{ scale: 1.1 }}>
-                <Avatar className="ring-2 ring-pink-200 dark:ring-pink-800 ring-offset-2">
-                  {entry.authorPhoto && <AvatarImage src={entry.authorPhoto} />}
-                  <AvatarFallback className="bg-gradient-to-br from-rose-400 to-pink-500 text-white font-semibold">
-                    {getInitials(entry.authorName)}
-                  </AvatarFallback>
-                </Avatar>
-              </motion.div>
+              <Avatar className="ring-2 ring-pink-500/50">
+                {entry.authorPhoto && <AvatarImage src={entry.authorPhoto} />}
+                <AvatarFallback className="bg-gradient-to-br from-pink-500 to-purple-600 text-white font-semibold">
+                  {getInitials(entry.authorName)}
+                </AvatarFallback>
+              </Avatar>
               <div>
-                <p className="font-semibold text-gray-900 dark:text-white text-sm">{entry.authorName}</p>
-                <p className="text-xs text-gray-400">{formatRelativeTime(entry.createdAt)}</p>
+                <p className="font-semibold text-white text-sm">{entry.authorName}</p>
+                <p className="text-xs text-gray-300">{formatRelativeTime(entry.createdAt)}</p>
               </div>
             </div>
 
             <div className="flex items-center gap-1">
               {/* Like button */}
               <motion.button
-                className="flex items-center gap-1.5 px-3 py-1.5 rounded-full hover:bg-pink-50 dark:hover:bg-pink-950/50 transition-colors"
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-full hover:bg-white/20 transition-colors"
                 onClick={handleLike}
                 whileTap={{ scale: 0.85 }}
               >
@@ -104,7 +75,7 @@ export function EntryCard({ entry, onDelete }: EntryCardProps) {
                 >
                   <Heart
                     className={`h-5 w-5 transition-colors duration-200 ${
-                      liked ? 'fill-rose-500 text-rose-500' : 'text-gray-400 dark:text-gray-500'
+                      liked ? 'fill-pink-500 text-pink-500' : 'text-gray-300'
                     }`}
                   />
                 </motion.div>
@@ -115,7 +86,7 @@ export function EntryCard({ entry, onDelete }: EntryCardProps) {
                       initial={{ opacity: 0, scale: 0.5, y: 4 }}
                       animate={{ opacity: 1, scale: 1, y: 0 }}
                       exit={{ opacity: 0, scale: 0.5 }}
-                      className="text-xs font-semibold text-rose-500"
+                      className="text-xs font-semibold text-pink-400"
                     >
                       {likeCount}
                     </motion.span>
@@ -128,7 +99,7 @@ export function EntryCard({ entry, onDelete }: EntryCardProps) {
                   <Button
                     variant="ghost"
                     size="icon"
-                    className="h-8 w-8 rounded-full hover:bg-red-50 dark:hover:bg-red-950/50 hover:text-red-500 transition-colors"
+                    className="h-8 w-8 rounded-full hover:bg-red-500/20 hover:text-red-400 transition-colors text-gray-300"
                     onClick={() => onDelete(entry.id)}
                   >
                     <Trash2 className="h-4 w-4" />
@@ -140,7 +111,7 @@ export function EntryCard({ entry, onDelete }: EntryCardProps) {
 
           {/* Text content */}
           {entry.text && (
-            <p className="text-gray-700 dark:text-gray-300 mb-4 whitespace-pre-wrap leading-relaxed text-sm">
+            <p className="text-gray-100 mb-4 whitespace-pre-wrap leading-relaxed text-sm">
               {entry.text}
             </p>
           )}
@@ -155,13 +126,12 @@ export function EntryCard({ entry, onDelete }: EntryCardProps) {
               {entry.imageUrls.map((url, idx) => (
                 <motion.div
                   key={idx}
-                  className="relative aspect-square rounded-2xl overflow-hidden cursor-pointer group"
-                  whileHover={{ scale: 1.03, zIndex: 10 }}
-                  whileTap={{ scale: 0.97 }}
+                  className="relative aspect-square rounded-xl overflow-hidden cursor-pointer group"
+                  whileHover={{ scale: 1.05 }}
                   onClick={() => setSelectedImage(url)}
                 >
-                  <Image src={url} alt={`Memory ${idx + 1}`} fill className="object-cover transition-transform duration-500 group-hover:scale-110" />
-                  <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-300 rounded-2xl" />
+                  <Image src={url} alt={`Memory ${idx + 1}`} fill className="object-cover transition-transform duration-300 group-hover:scale-110 rounded-xl" />
+                  <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-300 rounded-xl" />
                 </motion.div>
               ))}
             </div>
@@ -169,19 +139,19 @@ export function EntryCard({ entry, onDelete }: EntryCardProps) {
 
           {/* Multi-contributor badge */}
           {hasMultipleContributors && (
-            <div className="flex items-center gap-2 pt-3 border-t border-pink-100 dark:border-pink-900/50">
+            <div className="flex items-center gap-2 pt-3 border-t border-pink-500/20">
               <motion.div
                 animate={{ scale: [1, 1.2, 1] }}
                 transition={{ duration: 1.5, repeat: Infinity, repeatDelay: 3 }}
               >
                 <Heart className="h-3.5 w-3.5 fill-pink-400 text-pink-400" />
               </motion.div>
-              <p className="text-xs text-pink-500 dark:text-pink-400 font-medium">
+              <p className="text-xs text-pink-300 font-medium">
                 Both of you contributed to this memory
               </p>
             </div>
           )}
-        </motion.div>
+        </div>
       </motion.div>
 
       <Dialog open={!!selectedImage} onOpenChange={() => setSelectedImage(null)}>
