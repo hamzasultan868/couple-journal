@@ -23,7 +23,7 @@ export function LandingHero() {
         >
           <div className="inline-flex items-center justify-center gap-3 px-4 py-2 rounded-full backdrop-blur-xl bg-white/10 border border-white/20">
             <Heart className="w-5 h-5 text-pink-500" fill="currentColor" />
-            <span className="text-sm font-semibold text-white">Couple's Journal</span>
+            <span className="text-sm font-semibold text-white">Couple&apos;s Journal</span>
           </div>
         </motion.div>
 
@@ -47,7 +47,7 @@ export function LandingHero() {
           transition={{ duration: 0.8, delay: 0.2 }}
           className="text-xl text-gray-300 mb-12 max-w-2xl mx-auto"
         >
-          A private, encrypted journal designed for couples. Share moments, memories, and milestones in a space that's entirely yours.
+          A private, encrypted journal designed for couples. Share moments, memories, and milestones in a space that&apos;s entirely yours.
         </motion.p>
 
         {/* CTA Buttons */}

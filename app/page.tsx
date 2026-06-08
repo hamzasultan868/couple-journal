@@ -38,7 +38,7 @@ export default function Home() {
             <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-pink-500 to-purple-600 flex items-center justify-center font-bold text-white text-lg">
               ♡
             </div>
-            <span className="text-white font-bold text-xl hidden sm:block">Couple's Journal</span>
+            <span className="text-white font-bold text-xl hidden sm:block">Couple&apos;s Journal</span>
           </div>
           <a
             href="/auth"
@@ -99,7 +99,7 @@ export default function Home() {
             </div>
           </div>
           <div className="border-t border-white/10 pt-8 flex flex-col md:flex-row justify-between items-center text-gray-400 text-sm text-center md:text-left gap-4">
-            <p>&copy; 2026 Couple's Journal. All rights reserved.</p>
+            <p>&copy; 2026 Couple&apos;s Journal. All rights reserved.</p>
             <p>Made with love for couples in love</p>
           </div>
         </div>

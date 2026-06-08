@@ -58,7 +58,7 @@ export function TestimonialsSection() {
 
             {/* Text */}
             <p className="text-xl text-gray-100 mb-8 leading-relaxed italic">
-              "{testimonials[current].text}"
+              &ldquo;{testimonials[current].text}&rdquo;
             </p>
 
             {/* Author */}
