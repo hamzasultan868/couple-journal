@@ -24,10 +24,13 @@ CREATE TABLE IF NOT EXISTS users (
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
--- 3. Add foreign key constraints to couples table
+-- 3. Add foreign key constraints to couples table (only if running fresh)
+-- Skip this if constraints already exist - Supabase will handle on first run
 ALTER TABLE couples
   ADD CONSTRAINT fk_couples_partner1_id 
-    FOREIGN KEY (partner1_id) REFERENCES auth.users(id) ON DELETE CASCADE,
+    FOREIGN KEY (partner1_id) REFERENCES auth.users(id) ON DELETE CASCADE;
+
+ALTER TABLE couples
   ADD CONSTRAINT fk_couples_partner2_id 
     FOREIGN KEY (partner2_id) REFERENCES auth.users(id) ON DELETE CASCADE;
 
