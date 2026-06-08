@@ -47,9 +47,6 @@ const authOptions: NextAuthOptions = {
     async signIn({ user, account, profile, isNewUser }) {
       console.log('[NextAuth] User signed in:', user?.email)
     },
-    async error({ error }) {
-      console.error('[NextAuth] Error:', error)
-    },
   },
 }
 
