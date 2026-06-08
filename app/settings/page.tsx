@@ -51,7 +51,6 @@ export default function SettingsPage() {
 
   const isPartner1 = user.id === couple?.partner1Id
   const partnerName = isPartner1 ? couple?.partner2Name : couple?.partner1Name
-  const partnerPhoto = isPartner1 ? couple?.partner2Photo : couple?.partner1Photo
 
   return (
     <div className="min-h-screen relative">
@@ -121,7 +120,6 @@ export default function SettingsPage() {
                 <div className="flex items-center gap-4">
                   <motion.div whileHover={{ scale: 1.1, rotate: -5 }}>
                     <Avatar className="h-16 w-16 border-2 border-purple-200 dark:border-purple-800">
-                      {partnerPhoto && <AvatarImage src={partnerPhoto} />}
                       <AvatarFallback className="bg-gradient-to-br from-purple-400 to-purple-600 text-white text-lg">
                         {getInitials(partnerName)}
                       </AvatarFallback>
