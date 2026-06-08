@@ -4,9 +4,9 @@
 -- 1. Create couples table FIRST (no FK to users yet)
 CREATE TABLE IF NOT EXISTS couples (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  partner1_id UUID NOT NULL,
+  partner1_id TEXT NOT NULL,
   partner1_name TEXT NOT NULL,
-  partner2_id UUID,
+  partner2_id TEXT,
   partner2_name TEXT,
   invite_code TEXT UNIQUE,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
@@ -15,7 +15,7 @@ CREATE TABLE IF NOT EXISTS couples (
 
 -- 2. Create users table (can now reference couples)
 CREATE TABLE IF NOT EXISTS users (
-  id UUID PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,
+  id TEXT PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,
   email TEXT UNIQUE NOT NULL,
   display_name TEXT,
   photo_url TEXT,
@@ -30,10 +30,10 @@ CREATE TABLE IF NOT EXISTS journal_entries (
   couple_id UUID NOT NULL REFERENCES couples(id) ON DELETE CASCADE,
   text TEXT,
   image_urls TEXT[] DEFAULT ARRAY[]::TEXT[],
-  author_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+  author_id TEXT NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
   author_name TEXT NOT NULL,
   author_photo TEXT,
-  contributors UUID[] DEFAULT ARRAY[]::UUID[],
+  contributors TEXT[] DEFAULT ARRAY[]::TEXT[],
   created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
@@ -54,57 +54,57 @@ ALTER TABLE journal_entries ENABLE ROW LEVEL SECURITY;
 
 -- 6. Create RLS Policies for users table
 CREATE POLICY "Users can view their own data" ON users
-  FOR SELECT USING (auth.uid()::uuid = id);
+  FOR SELECT USING (auth.uid() = id);
 
 CREATE POLICY "Users can update their own data" ON users
-  FOR UPDATE USING (auth.uid()::uuid = id);
+  FOR UPDATE USING (auth.uid() = id);
 
 CREATE POLICY "Users can insert their own data" ON users
-  FOR INSERT WITH CHECK (auth.uid()::uuid = id);
+  FOR INSERT WITH CHECK (auth.uid() = id);
 
 -- 7. Create RLS Policies for couples table
 CREATE POLICY "Users can view couples they are part of" ON couples
   FOR SELECT USING (
-    auth.uid()::uuid = partner1_id OR auth.uid()::uuid = partner2_id
+    auth.uid() = partner1_id OR auth.uid() = partner2_id
   );
 
 CREATE POLICY "Users can update couples they are part of" ON couples
   FOR UPDATE USING (
-    auth.uid()::uuid = partner1_id OR auth.uid()::uuid = partner2_id
+    auth.uid() = partner1_id OR auth.uid() = partner2_id
   );
 
 CREATE POLICY "Users can insert couples (create new couple)" ON couples
-  FOR INSERT WITH CHECK (auth.uid()::uuid = partner1_id);
+  FOR INSERT WITH CHECK (auth.uid() = partner1_id);
 
 -- 8. Create RLS Policies for journal_entries table
 CREATE POLICY "Users can view entries from their couple" ON journal_entries
   FOR SELECT USING (
     couple_id IN (
       SELECT id FROM couples 
-      WHERE partner1_id = auth.uid()::uuid OR partner2_id = auth.uid()::uuid
+      WHERE partner1_id = auth.uid() OR partner2_id = auth.uid()
     )
   );
 
 CREATE POLICY "Users can insert entries to their couple" ON journal_entries
   FOR INSERT WITH CHECK (
-    auth.uid()::uuid = author_id AND
+    auth.uid() = author_id AND
     couple_id IN (
       SELECT id FROM couples 
-      WHERE partner1_id = auth.uid()::uuid OR partner2_id = auth.uid()::uuid
+      WHERE partner1_id = auth.uid() OR partner2_id = auth.uid()
     )
   );
 
 CREATE POLICY "Users can update their own entries" ON journal_entries
   FOR UPDATE USING (
-    auth.uid()::uuid = author_id OR
+    auth.uid() = author_id OR
     couple_id IN (
       SELECT id FROM couples 
-      WHERE partner1_id = auth.uid()::uuid OR partner2_id = auth.uid()::uuid
+      WHERE partner1_id = auth.uid() OR partner2_id = auth.uid()
     )
   );
 
 CREATE POLICY "Users can delete their own entries" ON journal_entries
-  FOR DELETE USING (auth.uid()::uuid = author_id);
+  FOR DELETE USING (auth.uid() = author_id);
 
 -- 9. Create storage bucket for journal images (if not exists)
 -- Note: You'll need to do this via Supabase UI:
