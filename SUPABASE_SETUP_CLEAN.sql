@@ -20,9 +20,9 @@ CREATE TABLE couples (
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
--- 3. Create users table (TEXT for user id to match auth.users)
+-- 3. Create users table (TEXT for user id to match auth.uid() - NO FK to auth.users)
 CREATE TABLE users (
-  id TEXT PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,
+  id TEXT PRIMARY KEY,
   email TEXT UNIQUE NOT NULL,
   display_name TEXT,
   photo_url TEXT,
@@ -37,7 +37,7 @@ CREATE TABLE journal_entries (
   couple_id UUID NOT NULL REFERENCES couples(id) ON DELETE CASCADE,
   text TEXT,
   image_urls TEXT[] DEFAULT ARRAY[]::TEXT[],
-  author_id TEXT NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+  author_id TEXT NOT NULL,
   author_name TEXT NOT NULL,
   author_photo TEXT,
   contributors TEXT[] DEFAULT ARRAY[]::TEXT[],
