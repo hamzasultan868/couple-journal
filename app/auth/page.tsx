@@ -62,10 +62,21 @@ export default function AuthPage() {
 
   const handleGoogleSignIn = async () => {
     setIsSigningIn(true)
+    console.log('[Auth] Starting Google sign-in...')
     try {
-      await signIn('google', { callbackUrl: '/couple' })
+      const result = await signIn('google', { callbackUrl: '/couple', redirect: true })
+      console.log('[Auth] SignIn result:', result)
+      if (result?.error) {
+        console.error('[Auth] SignIn error:', result.error)
+        toast({ title: 'Sign in failed', description: `Error: ${result.error}. Make sure Google OAuth is configured.`, variant: 'destructive' })
+      } else if (result?.ok === false) {
+        console.error('[Auth] SignIn failed:', result)
+        toast({ title: 'Sign in failed', description: 'Could not sign in with Google. Please check browser console for details.', variant: 'destructive' })
+      }
     } catch (error) {
+      console.error('[Auth] SignIn exception:', error)
       toast({ title: 'Sign in failed', description: 'Could not sign in with Google. Please try again.', variant: 'destructive' })
+    } finally {
       setIsSigningIn(false)
     }
   }
