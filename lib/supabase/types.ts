@@ -40,37 +40,31 @@ export interface Database {
           id: string
           invite_code: string
           created_at: string
-          created_by: string
+          updated_at: string
           partner1_id: string
           partner1_name: string
-          partner1_photo: string | null
           partner2_id: string | null
           partner2_name: string | null
-          partner2_photo: string | null
         }
         Insert: {
           id?: string
           invite_code: string
           created_at?: string
-          created_by: string
+          updated_at?: string
           partner1_id: string
           partner1_name: string
-          partner1_photo?: string | null
           partner2_id?: string | null
           partner2_name?: string | null
-          partner2_photo?: string | null
         }
         Update: {
           id?: string
           invite_code?: string
           created_at?: string
-          created_by?: string
+          updated_at?: string
           partner1_id?: string
           partner1_name?: string
-          partner1_photo?: string | null
           partner2_id?: string | null
           partner2_name?: string | null
-          partner2_photo?: string | null
         }
       }
       journal_entries: {
@@ -128,13 +122,11 @@ export interface Couple {
   id: string
   inviteCode: string
   createdAt: Date
-  createdBy: string
+  updatedAt: Date
   partner1Id: string
   partner1Name: string
-  partner1Photo: string | null
   partner2Id: string | null
   partner2Name: string | null
-  partner2Photo: string | null
 }
 
 export interface JournalEntry {

@@ -26,10 +26,8 @@ export async function createCouple(
       .from('couples')
       .insert({
         invite_code: inviteCode,
-        created_by: userId,
         partner1_id: userId,
         partner1_name: userName,
-        partner1_photo: userPhoto,
       } as any)
       .select()
       .single() as any)
@@ -70,13 +68,11 @@ export async function createCouple(
       id: (data as any).id,
       inviteCode: (data as any).invite_code,
       createdAt: new Date((data as any).created_at),
-      createdBy: (data as any).created_by,
+      updatedAt: new Date((data as any).updated_at),
       partner1Id: (data as any).partner1_id,
       partner1Name: (data as any).partner1_name,
-      partner1Photo: (data as any).partner1_photo,
       partner2Id: (data as any).partner2_id,
       partner2Name: (data as any).partner2_name,
-      partner2Photo: (data as any).partner2_photo,
     }
   } catch (error) {
     console.error('[createCouple] Unexpected error:', error)
@@ -158,13 +154,11 @@ export async function joinCoupleByCode(
       id: (updatedCouple as any).id,
       inviteCode: (updatedCouple as any).invite_code,
       createdAt: new Date((updatedCouple as any).created_at),
-      createdBy: (updatedCouple as any).created_by,
+      updatedAt: new Date((updatedCouple as any).updated_at),
       partner1Id: (updatedCouple as any).partner1_id,
       partner1Name: (updatedCouple as any).partner1_name,
-      partner1Photo: (updatedCouple as any).partner1_photo,
       partner2Id: (updatedCouple as any).partner2_id,
       partner2Name: (updatedCouple as any).partner2_name,
-      partner2Photo: (updatedCouple as any).partner2_photo,
     }
   } catch (error) {
     console.error('[joinCoupleByCode] Unexpected error:', error)
@@ -241,7 +235,6 @@ export async function joinCoupleByEmail(
       .update({
         partner2_id: userId,
         partner2_name: userName,
-        partner2_photo: userPhoto,
       })
       .eq('id', (coupleData as any).id)
       .select()
@@ -264,13 +257,11 @@ export async function joinCoupleByEmail(
       id: (updatedCouple as any).id,
       inviteCode: (updatedCouple as any).invite_code,
       createdAt: new Date((updatedCouple as any).created_at),
-      createdBy: (updatedCouple as any).created_by,
+      updatedAt: new Date((updatedCouple as any).updated_at),
       partner1Id: (updatedCouple as any).partner1_id,
       partner1Name: (updatedCouple as any).partner1_name,
-      partner1Photo: (updatedCouple as any).partner1_photo,
       partner2Id: (updatedCouple as any).partner2_id,
       partner2Name: (updatedCouple as any).partner2_name,
-      partner2Photo: (updatedCouple as any).partner2_photo,
     }
   } catch (error) {
     console.error('[joinCoupleByEmail] Unexpected error:', error)
@@ -309,13 +300,11 @@ export async function getCoupleById(coupleId: string): Promise<Couple | null> {
       id: (data as any).id,
       inviteCode: (data as any).invite_code,
       createdAt: new Date((data as any).created_at),
-      createdBy: (data as any).created_by,
+      updatedAt: new Date((data as any).updated_at),
       partner1Id: (data as any).partner1_id,
       partner1Name: (data as any).partner1_name,
-      partner1Photo: (data as any).partner1_photo,
       partner2Id: (data as any).partner2_id,
       partner2Name: (data as any).partner2_name,
-      partner2Photo: (data as any).partner2_photo,
     }
   } catch (error) {
     console.error('[getCoupleById] Unexpected error:', error)
